@@ -1,0 +1,63 @@
+import os
+import numpy as np                                                              # numpy
+import more_itertools as it                                                     # iterables
+
+
+def th_sets(theta):
+    """
+    This function generates the state, observation, decision, and action sets
+    for the treasure hunt task and agent models
+
+    Inputs
+        theta       : task parameter structure with required fields
+            .d      : dimensionality of the square grid world
+            .n_n    : number of nodes
+            .n_h    : number of hiding spots
+            .n_s    : state space cardinality
+
+    Outputs
+        theta       : input structure without modifications
+
+        The following set arrays are saved to disk
+            S       : n_s x (2 + n_h) array of state values
+            O       : n_n x 1 array of observation values
+
+    Authors - Belinda Fleischmann, Dirk Ostwald
+    """
+    d       = theta.d                                                           # dimensionality of the square grid world
+    d_s     = theta.d_s                                                         # state vector dimension (agent location, treasure location, hiding spot locations)
+    n_n     = theta.n_n                                                         # number of nodes
+    n_h     = theta.n_h                                                         # number of hiding spots
+    n_s3    = theta.n_s3                                                        # number of unique hiding spot combination possibilities
+    n_s     = theta.n_s                                                         # state space cardinality
+    nodes   = range(1, n_n + 1)                                                 # set of nodes
+
+    # State set
+    if not os.path.exists("Components/S.npy"):
+
+        S_raw   = np.full([n_s, d_s], np.nan, dtype=int)                        # raw state value array initialization
+        S3      = it.distinct_combinations(nodes, r=n_h)                        # distinct combinations of n_h selections of set nodes
+        idx     = 0                                                             # row index initialization
+
+        # TODO: evtl. s3 und s2 jeweils + 1, damit Zählung bei 1 und nicht 0 anfängt?
+        for s3 in S3:                                                           # hiding spot combination iterations
+            for s2 in s3:                                                       # treasure location iterations (possible locations given hiding spots)
+                for s1 in nodes:                                                # agent location iterations
+                    S_raw[idx, :] = np.hstack(                                  # state value concatenation
+                        (np.array([s1, s2]), np.array(list(s3))))               # result in each row [s1, s2, s3]
+                    idx          = idx + 1                                      # row index update
+
+        S   = np.full([n_s, d_s], np.nan, dtype=int)                            # sorted state value array initialization
+        idx = 0                                                                 # row index initialization
+        for s1 in nodes:                                                        # agent location iterations
+            S_s1 = S_raw[S_raw[:, 0] == s1]                                     # state values with agent location s1
+            for s2 in nodes:                                                    # treasure location iterations
+                S_s2 = S_s1[S_s1[:, 1] == s2]                                   # state values with agent location s1 and treasure location s2
+                S[idx:idx + S_s2.shape[0], :] = S_s2                            # sorted state value array update
+                idx = idx + S_s2.shape[0]                                       # row index update
+        # FRAGE: Ist dieser snippet, der S erstellt, nur dafür da, die state values zu sortieren?
+
+        os.makedirs("Components")
+        np.save("Components/S", S)                                              # save to disc
+
+    return theta
