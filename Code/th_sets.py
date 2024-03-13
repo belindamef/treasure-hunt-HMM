@@ -19,9 +19,9 @@ def th_sets(theta):
         theta       : input structure without modifications
 
     Saves to disk (if not existing)
-        S       : n_s x (2 + n_h) array of state values
-        O       : n_n x 1 array of observation values
-        A       : 5 x 0 array of action values
+        S           : n_s x (2 + n_h) array of state values
+        O           : n_n x 1 array of observation values
+        A           : 5 x 0 array of action values
 
     Authors - Belinda Fleischmann, Dirk Ostwald
     """
