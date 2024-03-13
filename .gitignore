@@ -1,0 +1,15 @@
+# IDEs and OSX
+*.vscode
+.DS_Store
+.idea/
+__pycache__/
+**__pycache__/
+
+# Virtual environments
+.th_env
+.my-master-project
+.python-version
+
+# nextcloud sync
+**.sync*
+**.nextcloud*
