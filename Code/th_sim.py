@@ -22,7 +22,7 @@ theta.n_n       = theta.d ** 2                                                  
 theta.n_h       = 2                                                             # number of treasure hiding spots
 theta.d_s       = 2 + theta.n_h                                                 # state vector dimension (agent location, treasure location, hiding spot locations)
 theta.n_r       = 1                                                             # number of rounds per game
-theta.n_a       = 12                                                            # maximal number of actions per round
+theta.n_t       = 12                                                            # maximal number of actions per round
 theta           = th_cards(theta)                                               # task sets' cardinalities
 
 # task sets
