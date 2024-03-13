@@ -18,9 +18,10 @@ def th_sets(theta):
     Outputs
         theta       : input structure without modifications
 
-        The following set arrays are saved to disk
-            S       : n_s x (2 + n_h) array of state values
-            O       : n_n x 1 array of observation values
+    Saves to disk (if not existing)
+        S       : n_s x (2 + n_h) array of state values
+        O       : n_n x 1 array of observation values
+        A       : 5 x 0 array of action values
 
     Authors - Belinda Fleischmann, Dirk Ostwald
     """
@@ -59,5 +60,14 @@ def th_sets(theta):
 
         os.makedirs("Components")
         np.save("Components/S", S)                                              # save to disc
+
+    # TODO: update observation set
+    # observation set
+    O   = np.array(nodes)                                                       # node observation
+    np.save("Components/O", O)                                                  # save to disk
+
+    # Action set
+    A   = np.array([0, -d, 1, d, -1])                                           # actions (drill, north, east, south, west)
+    np.save("Components/A", A)                                                  # save to disk
 
     return theta
