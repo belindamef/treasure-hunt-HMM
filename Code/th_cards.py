@@ -32,5 +32,5 @@ def th_cards(theta):
     theta.n_s3  = int(n_s3)                                                     # number of unique hiding spots combination possibilities
     theta.n_s   = int(n_s)                                                      # state space cardinality
     theta.n_a   = 5                                                             # action space cardinality
-
+    theta.n_o   = 5                                                             # observation space cardinality
     return theta

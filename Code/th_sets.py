@@ -62,7 +62,15 @@ def th_sets(theta):
 
     # TODO: update observation set
     # observation set
-    O   = np.array(nodes)                                                       # node observation
+    O   = np.array(
+            ([0, 0],
+             [0, 1],
+             [0, 2],
+             [1, 0],
+             # [1, 1]   #TODO nicht möglich, trotzdem drin lassen? 
+             [1, 2]),
+             dtype=int)
+
     np.save("Components/O", O)                                                  # save to disk
 
     # Action set

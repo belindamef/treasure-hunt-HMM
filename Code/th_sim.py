@@ -10,10 +10,7 @@ from th_structure import th_structure                                           
 from th_cards import th_cards                                                   # task sets' cardinalities
 from th_sets import th_sets                                                     # task/agent model sets generator
 from th_phi import th_phi                                                       # action-dependent state-state transition probability matrices
-# from th_omega import th_omega                                                   # action-dependent state conditional observation probability matrices
-# from th_task import th_task                                                     # task object
-# from th_sim_game import th_sim_game                                             # game simulation routine
-# from th_vis_game import th_vis_game                                             # game visualization routine
+from th_omega import th_omega                                                   # action-dependent state conditional observation probability matrices
 
 # task parameters
 theta           = th_structure()                                                # simulation structure initialization
@@ -33,3 +30,4 @@ A               = np.load("Components/A.npy")                                   
 
 # stochastic matrices
 Phi             = th_phi(S, A, theta)                                           # action-dependent state-state transition probability matrices
+Omega           = th_omega(S, O, theta)                                         # action-dependent state conditional observation probability matrices

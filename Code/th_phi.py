@@ -28,13 +28,17 @@ def th_phi(S, A, theta):
 
     Authors - Belinda Fleischmann, Dirk Ostwald
     """
+    # Task parameters and set cardinalities
     n_n     = theta.n_n                                                         # number of nodes
+    n_h     = theta.n_h                                                         # number of treasure hiding spots
     d       = theta.d                                                           # dimension of the square grid world
     n_s     = theta.n_s                                                         # state space cardinality (number of states)
     n_a     = theta.n_a                                                         # action space cardinality (number of actions)
+
+    # Initialize state-state transition probability matrices array
     Phi     = np.full([n_s, n_s, n_a], 0, dtype=int)                            # action-dependent state-state transition probability matrices array initialization
 
-    # Compute Phi of not existing
+    # Compute Phi if not existing on disk
     if not os.path.exists("Components/Phi.npy"):
 
         for k in range(n_a):                                                    # a_t   iterations
@@ -78,8 +82,8 @@ def th_phi(S, A, theta):
         np.save("Components/Phi", Phi)                                          # save to disc
 
         plot_color_map(                                                         # plot action specific Phi matrices
-            n_nodes=theta.n_n,
-            n_hides=theta.n_h,
+            n_nodes=n_n,
+            n_hides=n_h,
             Phi_drill=Phi[:, :, 0],
             Phi_minus_dim=Phi[:, :, 1],
             Phi_plus_one=Phi[:, :, 2],
@@ -87,7 +91,7 @@ def th_phi(S, A, theta):
             Phi_minus_one=Phi[:, :, 4]
         )
 
-    # Else load Phi from disk, if existing
+    # Else load Phi from disk
     else:
         Phi = np.load("Components/Phi.npy")
 
