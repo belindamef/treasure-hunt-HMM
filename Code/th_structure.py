@@ -1,5 +1,5 @@
 class th_structure():
-    """This class definition file enables the Matlab structure-like use of 
+    """This class definition file enables the Matlab structure-like use of
     Python objects.
 
     Objects of type th_structure are initialized by

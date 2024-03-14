@@ -3,7 +3,7 @@ import numpy as np                                                              
 import more_itertools as it                                                     # iterables
 
 
-def th_sets(theta):
+def th_sets(theta, paths):
     """
     This function generates the state, observation, decision, and action sets
     for the treasure hunt task and agent models
@@ -33,7 +33,7 @@ def th_sets(theta):
     nodes   = range(1, n_n + 1)                                                 # set of nodes
 
     # State set
-    if not os.path.exists("Components/S.npy"):
+    if not os.path.exists(os.path.join(paths.components, "S.npy")):
 
         S_raw   = np.full([n_s, d_s], np.nan, dtype=int)                        # raw state value array initialization
         S3      = it.distinct_combinations(nodes, r=n_h)                        # distinct combinations of n_h selections of set nodes
@@ -57,24 +57,23 @@ def th_sets(theta):
                 idx = idx + S_s2.shape[0]                                       # row index update
         # TODO: FRAGE: Ist dieser snippet, der S erstellt, nur dafür da, die state values zu sortieren?
 
-        os.makedirs("Components")
-        np.save("Components/S", S)                                              # save to disc
+        np.save(os.path.join(paths.components, "S"), S)                         # save to disc
 
     # TODO: update observation set
     # observation set
-    O   = np.array(
-            ([0, 0],
-             [0, 1],
-             [0, 2],
-             [1, 0],
-             # [1, 1]   #TODO nicht möglich, trotzdem drin lassen? 
-             [1, 2]),
-             dtype=int)
+    O = np.array(
+        ([0, 0],                                                                # no treasure on black
+         [0, 1],                                                                # no treasure on grey
+         [0, 2],                                                                # no treasure on blue
+         [1, 0],                                                                # treasure on black
+         # [1, 1]  TODO: unmögliche Beobachtung, trotzdem drin lassen?          # treasure on grey
+         [1, 2]),                                                               # no treasure on blue
+        dtype=int)
 
-    np.save("Components/O", O)                                                  # save to disk
+    np.save(os.path.join(paths.components, "O"), O)                                                  # save to disk
 
     # Action set
-    A   = np.array([0, -d, 1, d, -1])                                           # actions (drill, north, east, south, west)
-    np.save("Components/A", A)                                                  # save to disk
+    A = np.array([0, -d, 1, d, -1])                                             # actions (drill, north, east, south, west)
+    np.save(os.path.join(paths.components, "A"), A)                                                  # save to disk
 
     return theta

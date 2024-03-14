@@ -3,7 +3,7 @@ import numpy as np                                                              
 from th_imshow import plot_color_map
 
 
-def th_phi(S, A, theta):
+def th_phi(S, A, theta, paths):
     """"
     This function evaluates the action-dependent and state-conditional
     observation probability distribution of a Bayesian agent for the treasure
@@ -30,7 +30,6 @@ def th_phi(S, A, theta):
     """
     # Task parameters and set cardinalities
     n_n     = theta.n_n                                                         # number of nodes
-    n_h     = theta.n_h                                                         # number of treasure hiding spots
     d       = theta.d                                                           # dimension of the square grid world
     n_s     = theta.n_s                                                         # state space cardinality (number of states)
     n_a     = theta.n_a                                                         # action space cardinality (number of actions)
@@ -39,7 +38,7 @@ def th_phi(S, A, theta):
     Phi     = np.full([n_s, n_s, n_a], 0, dtype=int)                            # action-dependent state-state transition probability matrices array initialization
 
     # Compute Phi if not existing on disk
-    if not os.path.exists("Components/Phi.npy"):
+    if not os.path.exists(os.path.join(paths.components, "Phi.npy")):
 
         for k in range(n_a):                                                    # a_t   iterations
 
@@ -79,11 +78,10 @@ def th_phi(S, A, theta):
                         if np.array_equal(s_t, s_tt):
                             Phi[i, j, k] = 1                                    # TODO: p(s_{t+1} = \tilde{s} |s_{t} = s) = 1 for \tilde{s} = s, 0 else
 
-        np.save("Components/Phi", Phi)                                          # save to disc
+        np.save(os.path.join(paths.components, "Phi"), Phi)                                          # save to disc
 
         plot_color_map(                                                         # plot action specific Phi matrices
-            n_nodes=n_n,
-            n_hides=n_h,
+            paths=paths,
             Phi_drill=Phi[:, :, 0],
             Phi_minus_dim=Phi[:, :, 1],
             Phi_plus_one=Phi[:, :, 2],
@@ -93,6 +91,6 @@ def th_phi(S, A, theta):
 
     # Else load Phi from disk
     else:
-        Phi = np.load("Components/Phi.npy")
+        Phi = np.load(os.path.join(paths.components, "Phi.npy"))
 
     return Phi

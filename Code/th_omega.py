@@ -3,7 +3,7 @@ import os
 from th_imshow import plot_color_map
 
 
-def th_omega(S, O, theta):
+def th_omega(S, O, theta, paths):
     """This function evaluates the action-dependent and state-conditional
     observation probability distribution of a Bayesian agent for the treasure
     hunt task.
@@ -18,8 +18,6 @@ def th_omega(S, O, theta):
 
     """
     # Task parameters and set cardinalities
-    n_n     = theta.n_n                                                         # number of nodes
-    n_h     = theta.n_h                                                         # number of treasure hiding spots
     n_s     = theta.n_s                                                         # state space cardinality (number of states)
     n_o     = theta.n_o                                                         # observation space cardinality (number of observations)
     n_a     = 2                                                                 # compressed action space cardinality (drill/step)
@@ -31,7 +29,7 @@ def th_omega(S, O, theta):
     Omega   = np.full([n_s, n_o, 2], 0, dtype=int)
 
     # Compute Omega if not existing on disk
-    if not os.path.exists("Components/Omega.npy"):
+    if not os.path.exists(os.path.join(paths.components, "Omega")):
 
         for p in range(n_a):                                                    # action iterations
 
@@ -136,16 +134,15 @@ def th_omega(S, O, theta):
                         ):
                             Omega[i, m, p] = 1                                  # possible observation
 
-        np.save("Components/Omega", Omega)                                      # save to disc
+        np.save(os.path.join(paths.components, "Omega"), Omega)                 # save to disc
 
         plot_color_map(
-            n_nodes=n_n,
-            n_hides=n_h,
+            paths=paths,
             Omega_drill=Omega[:, :, 0],
-            Omega_step=Omega[:, :, 1]
+            Omega_step=Omega[:, :, 1],
         )
 
     # Else load Omega from disk
     else:
-        Omega = np.load("Components/Omega.npy")
+        Omega = np.load(os.path.join(paths.components, "Omega"))
     return Omega
