@@ -29,7 +29,6 @@ def th_sets(theta):
     d_s     = theta.d_s                                                         # state vector dimension (agent location, treasure location, hiding spot locations)
     n_n     = theta.n_n                                                         # number of nodes
     n_h     = theta.n_h                                                         # number of hiding spots
-    n_s3    = theta.n_s3                                                        # number of unique hiding spot combination possibilities
     n_s     = theta.n_s                                                         # state space cardinality
     nodes   = range(1, n_n + 1)                                                 # set of nodes
 
@@ -56,7 +55,7 @@ def th_sets(theta):
                 S_s2 = S_s1[S_s1[:, 1] == s2]                                   # state values with agent location s1 and treasure location s2
                 S[idx:idx + S_s2.shape[0], :] = S_s2                            # sorted state value array update
                 idx = idx + S_s2.shape[0]                                       # row index update
-        # FRAGE: Ist dieser snippet, der S erstellt, nur dafür da, die state values zu sortieren?
+        # TODO: FRAGE: Ist dieser snippet, der S erstellt, nur dafür da, die state values zu sortieren?
 
         os.makedirs("Components")
         np.save("Components/S", S)                                              # save to disc

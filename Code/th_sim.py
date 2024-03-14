@@ -32,4 +32,4 @@ O               = np.load("Components/O.npy")                                   
 A               = np.load("Components/A.npy")                                   # action set
 
 # stochastic matrices
-Phi             = th_phi(S, A, theta)                                                  # action-dependent state-state transition probability matrices
+Phi             = th_phi(S, A, theta)                                           # action-dependent state-state transition probability matrices

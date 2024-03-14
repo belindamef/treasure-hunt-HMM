@@ -6,7 +6,7 @@ def th_cards(theta):
     This function computes the treasure hunt's state, observation and
     action set cardinalities
 
-    # TODO: cardinalities of observation and action sets needed?
+    # TODO: cardinality of observation
 
     Inputs
           theta     : task parameter structure with required fields
@@ -27,7 +27,6 @@ def th_cards(theta):
     # cardinalities
     n_s3        = (fact(n_n)) / (fact(n_n - n_h) * fact(n_h))                   # number of unique hiding spot combination possibilities
     n_s         = n_s3 * n_h * n_n                                              # latent state space cardinality
-    # TODO add cardinalities of observation and action if needed
 
     # output
     theta.n_s3  = int(n_s3)                                                     # number of unique hiding spots combination possibilities
