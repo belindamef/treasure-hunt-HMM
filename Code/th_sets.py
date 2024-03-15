@@ -35,7 +35,7 @@ def th_sets(theta, paths):
     # State set
     if not os.path.exists(os.path.join(paths.components, "S.npy")):
 
-        S_raw   = np.full([n_s, d_s], np.nan, dtype=int)                        # raw state value array initialization
+        S_raw   = np.full([n_s, d_s], np.nan, dtype=np.int8)                        # raw state value array initialization
         S3      = it.distinct_combinations(nodes, r=n_h)                        # distinct combinations of n_h selections of set nodes
         idx     = 0                                                             # row index initialization
 
@@ -47,7 +47,7 @@ def th_sets(theta, paths):
                         (np.array([s1, s2]), np.array(list(s3))))               # result in each row [s1, s2, s3]
                     idx          = idx + 1                                      # row index update
 
-        S   = np.full([n_s, d_s], np.nan, dtype=int)                            # sorted state value array initialization
+        S   = np.full([n_s, d_s], np.nan, dtype=np.int8)                            # sorted state value array initialization
         idx = 0                                                                 # row index initialization
         for s1 in nodes:                                                        # agent location iterations
             S_s1 = S_raw[S_raw[:, 0] == s1]                                     # state values with agent location s1
