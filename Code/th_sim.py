@@ -41,3 +41,11 @@ A               = np.load(os.path.join(paths.components, "A.npy"))              
 # stochastic matrices
 Phi             = th_phi(S, A, theta, paths)                                    # action-dependent state-state transition probability matrices
 Omega           = th_omega(S, O, theta, paths)                                  # action-dependent state conditional observation probability matrices
+
+# task initialization structure
+t_init          = th_structure()                                                # task initialization structure
+t_init.theta    = theta                                                         # task parameters
+t_init.S        = S                                                             # state set
+t_init.O        = O                                                             # observation set
+t_init.A        = A                                                             # action set
+t_init.Phi      = Phi                                                           # action-dependent state-state transition probability matrix
