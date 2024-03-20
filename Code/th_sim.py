@@ -13,6 +13,8 @@ from th_cards import th_cards                                                   
 from th_sets import th_sets                                                     # task/agent model sets generator
 from th_phi import th_phi                                                       # action-dependent state-state transition probability matrices
 from th_omega import th_omega                                                   # action-dependent state conditional observation probability matrices
+from th_sim_game import th_sim_game                                             # game simulation routine
+
 
 # directory management
 this_task_config_label = "test"
@@ -24,7 +26,7 @@ theta.d         = 5                                                             
 theta.n_n       = theta.d ** 2                                                  # number of grid world cells/nodes
 theta.n_h       = 6                                                             # number of treasure hiding spots
 theta.d_s       = 2 + theta.n_h                                                 # state vector dimension (agent location, treasure location, hiding spot locations)
-theta.n_r       = 1                                                             # number of rounds per game
+theta.n_c       = 1                                                             # number of rounds per game
 theta.n_t       = 12                                                            # maximal number of actions per round
 theta           = th_cards(theta)                                               # task sets' cardinalities
 
@@ -62,3 +64,4 @@ sim.mode        = "simulation"                                                  
 sim.theta       = theta                                                         # simulation parameters
 sim.t_init      = t_init                                                        # task initialization structure
 sim.a_init      = a_init                                                        # agent initialization structure
+sim             = th_sim_game(sim)                                              # simulate one treasure hunt game
