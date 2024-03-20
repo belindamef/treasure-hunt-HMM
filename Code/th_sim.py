@@ -20,9 +20,9 @@ paths = th_structure()
 
 # task parameters
 theta           = th_structure()                                                # simulation structure initialization
-theta.d         = 2                                                             # dimension of the square grid world
+theta.d         = 5                                                             # dimension of the square grid world
 theta.n_n       = theta.d ** 2                                                  # number of grid world cells/nodes
-theta.n_h       = 2                                                             # number of treasure hiding spots
+theta.n_h       = 6                                                             # number of treasure hiding spots
 theta.d_s       = 2 + theta.n_h                                                 # state vector dimension (agent location, treasure location, hiding spot locations)
 theta.n_r       = 1                                                             # number of rounds per game
 theta.n_t       = 12                                                            # maximal number of actions per round
@@ -35,8 +35,8 @@ paths = th_paths(theta)
 # task sets
 theta           = th_sets(theta, paths)                                         # task/agent model state, observation, decision, and action set creation
 S               = np.load(os.path.join(paths.components, "S.npy"))              # state set
-O               = np.load(os.path.join(paths.components, "O.npy"))                          # observation set
-A               = np.load(os.path.join(paths.components, "A.npy"))                          # action set
+O               = np.load(os.path.join(paths.components, "O.npy"))              # observation set
+A               = np.load(os.path.join(paths.components, "A.npy"))              # action set
 
 # stochastic matrices
 Phi             = th_phi(S, A, theta, paths)                                    # action-dependent state-state transition probability matrices

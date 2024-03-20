@@ -96,7 +96,7 @@ def th_phi(S, A, theta, paths):
     # np.all(S[n_s3 * n_h : 2 * n_s3 * n_h, :][:, 0] == 2)
     # --------------------------------------------------------------------------
 
-    n_nonzeros = n_n * n_h * n_s3                                               # number of nonzero values in each Phi[p]
+    n_nonzeros = n_n * n_h * n_s3                                               # number of nonzero values in each Phi[p], same as n_s
 
     # Create row index iterable for s1-sepcific identiy matrices
     n_ident = n_s // n_n                                                        # size of one identity matrix, same as n_s3 * n_h step size for iterable
@@ -112,6 +112,7 @@ def th_phi(S, A, theta, paths):
         # Compute Phi[p] if not existing on disk
         if not os.path.exists(os.path.join(paths.components, f"{Phi_matrix_name}.npz")):
 
+            print(f"Starting evaluation of Phi[{p}]..., matrix_label: {Phi_matrix_name}")
             # Initialize arrays to store row and col indices, that indicate value 1 entries in Phi[p]; needed to create sparse matrices
             rows = np.full((n_nonzeros), np.nan)                                # array to store row indices
             cols = np.full((n_nonzeros), np.nan)                                # array to store col indices
@@ -123,11 +124,11 @@ def th_phi(S, A, theta, paths):
 
                 for j in range(n_s):                                            # s_t+1 iterations
 
-                    a_t_aug     = np.hstack([a, np.zeros(S.shape[1] - 1)])      # a_t augmented for addition to state vector
+                    a_aug     = np.hstack([a, np.zeros(S.shape[1] - 1)])        # a augmented for addition to state vector
                     s_t     = S[i, :]                                           # s_t
                     s_tt    = S[j, :]                                           # s_{t+1}
                     s1_t    = s_t[0]                                            # first element of s_t, representing current position in t
-  
+
                     # If action is valid (movement within grid, no boarder crossing)
                     if (
                         # a does not move the agent beyond the top or bottom border
@@ -143,7 +144,7 @@ def th_phi(S, A, theta, paths):
                     ):
 
                         # Set Phi-entry that represents correct state transition to 1
-                        if np.array_equal(s_t + a_t_aug, s_tt):                 # TODO: p(s_{t+1} = \tilde{s} |s_{t} = s) = 1 for \tilde{s} = s + a_augm, 0 else
+                        if np.array_equal(s_t + a_aug, s_tt):                 # TODO: p(s_{t+1} = \tilde{s} |s_{t} = s) = 1 for \tilde{s} = s + a_augm, 0 else
 
                             rows[i: (i + n_ident)] = np.arange(i, i + n_ident)
                             cols[i: (i + n_ident)] = np.arange(j, j + n_ident)
@@ -183,28 +184,24 @@ def th_phi(S, A, theta, paths):
             # Save Phi[p] to disk
             paths.save_arrays(
                 sparse=True,
-                Phi_drill=Phi[0],
-                Phi_minus_dim=Phi[1],
-                Phi_plus_one=Phi[2],
-                Phi_plus_dim=Phi[3],
-                Phi_minus_one=Phi[4]
-            ) # TODO: robust coden, speichert noch alle hitherto erstellten Phi's auf einmal
+                file_name=Phi_matrix_name,
+                array=Phi[p]
+            )  # TODO: robust coden, speichert noch alle hitherto erstellten Phi's auf einmal
 
         # Load Phi[p] from disk, if existing
         else:
-            for p, name in enumerate(matrix_names):
-                with open(os.path.join(paths.components, f"{name}.npz"), "rb") as file:
-                    Phi[p] = sp.load_npz(file)
+            with open(os.path.join(paths.components, f"{Phi_matrix_name}.npz"), "rb") as file:
+                Phi[p] = sp.load_npz(file)
 
-        # Plot Phi[p]s, only if grid is of small dimension d = 2
-        if d == 2:
-            plot_color_map(                                                     # plot action specific Phi matrices
-                paths=paths,
-                Phi_drill=Phi[0].todense(),
-                Phi_minus_dim=Phi[1].todense(),
-                Phi_plus_one=Phi[2].todense(),
-                Phi_plus_dim=Phi[3].todense(),
-                Phi_minus_one=Phi[4].todense()
-            )
+    # Plot Phi[p]s, only if grid is of small dimension d = 2
+    if d == 2:
+        plot_color_map(                                                     # plot action specific Phi matrices
+            paths=paths,
+            Phi_drill=Phi[0].todense(),
+            Phi_minus_dim=Phi[1].todense(),
+            Phi_plus_one=Phi[2].todense(),
+            Phi_plus_dim=Phi[3].todense(),
+            Phi_minus_one=Phi[4].todense()
+        )
 
     return Phi

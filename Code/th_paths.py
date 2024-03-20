@@ -30,19 +30,17 @@ class th_paths():
         if not os.path.exists(self.figures):
             os.makedirs(self.figures)
 
-    def save_arrays(self, sparse=False, save_csv=False, **arrays):
+    def save_arrays(self, file_name, array, sparse=False, save_csv=False):
 
-        for key, array in arrays.items():
+        if save_csv:
+            # Write the vectors to a tsv file
+            with open(f"{self.components}/{file_name}.csv", 'w', newline='', encoding="utf8") as f:
+                writer = csv.writer(f, delimiter=',')
+                writer.writerows(array)
 
-            if save_csv:
-                # Write the vectors to a tsv file
-                with open(f"{self.components}/{key}.csv", 'w', newline='', encoding="utf8") as f:
-                    writer = csv.writer(f, delimiter=',')
-                    writer.writerows(array)
-
-            if sparse:
-                with open(f"{self.components}/{key}.npz", "wb") as f:
-                    sp.save_npz(f, array)
-            else:
-                with open(f"{self.components}/{key}.pkl", "wb") as f:
-                    pickle.dump(array, f)
+        if sparse:
+            with open(f"{self.components}/{file_name}.npz", "wb") as f:
+                sp.save_npz(f, array)
+        else:
+            with open(f"{self.components}/{file_name}.pkl", "wb") as f:
+                pickle.dump(array, f)

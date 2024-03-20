@@ -20,7 +20,7 @@ def th_sets(theta, paths):
 
     Saves to disk (if not existing)
         S           : n_s x (2 + n_h) array of state values
-        O           : n_n x 1 array of observation values
+        O           : n_n x 2 array of observation values
         A           : 5 x 0 array of action values
 
     Authors - Belinda Fleischmann, Dirk Ostwald
@@ -67,7 +67,7 @@ def th_sets(theta, paths):
          [0, 2],                                                                # no treasure on blue
          [1, 0],                                                                # treasure on black
          # [1, 1]  TODO: unmögliche Beobachtung, trotzdem drin lassen?          # treasure on grey
-         [1, 2]),                                                               # no treasure on blue
+         [1, 2]),                                                               # treasure on blue
         dtype=int)
 
     np.save(os.path.join(paths.components, "O"), O)                                                  # save to disk
