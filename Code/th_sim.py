@@ -49,3 +49,8 @@ t_init.S        = S                                                             
 t_init.O        = O                                                             # observation set
 t_init.A        = A                                                             # action set
 t_init.Phi      = Phi                                                           # action-dependent state-state transition probability matrix
+
+# agent initialization structure
+a_init          = th_structure()                                                # task initialization structure
+a_init.Omega    = Omega                                                         # action-dependent state conditional observation probability matrices
+
