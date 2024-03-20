@@ -54,3 +54,11 @@ t_init.Phi      = Phi                                                           
 a_init          = th_structure()                                                # task initialization structure
 a_init.Omega    = Omega                                                         # action-dependent state conditional observation probability matrices
 
+# simulation
+sim             = th_structure()                                                # game simulation structure initialization
+sim.p           = 1                                                             # participant index
+sim.g           = 1                                                             # game index
+sim.mode        = "simulation"                                                  # simulation mode
+sim.theta       = theta                                                         # simulation parameters
+sim.t_init      = t_init                                                        # task initialization structure
+sim.a_init      = a_init                                                        # agent initialization structure
