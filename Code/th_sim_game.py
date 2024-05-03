@@ -2,7 +2,7 @@ import numpy as np                                                              
 import pandas as pd                                                             # Pandas
 from th_task import th_task                                                     # task model module
 from th_agent import th_agent                                                   # agent model module
-
+import logging
 
 def th_sim_game(sim):
     """
@@ -18,9 +18,9 @@ def th_sim_game(sim):
     Inputs:
         sim  : structure with fields
             .p      : participant index
-            .g      : game index
             .mode   : simulation mode
-            .theta  : simulation parameters
+         .g      : game index
+               .theta  : simulation parameters
             .t_init : task initialization structure
             .a_init : agent initialization structure
             .m_init : model initialization structure
@@ -41,7 +41,7 @@ def th_sim_game(sim):
     task                = th_task(t_init)                                       # task object
     a_init.task         = task                                                  # task embedding
     agent               = th_agent(a_init)                                      # agent initialization
-    pi                  = np.array([2, 3, 4, 1])                                # TODO
+    pi                  = np.array([2, 3, 4, 1])                                # TODO: decision policy, um zu zeigen, dass der agent mit vorgegebenen actions \pi rum geht 
 
     # task agent interaction observation
     # --------------------------------------------------------------------------
@@ -49,18 +49,40 @@ def th_sim_game(sim):
 
     for c in np.arange(theta.n_c):                                              # round iterations
 
-        # recording arrays
-        s_t   = np.full((theta.n_t, theta.d_s), np.nan)                         # task state array
-        print(s_t)
+        # recording arrays # TODO
+        s_t   = np.full((theta.n_t + 1, theta.d_s), np.nan)                     # task state array
+        d_t   = np.full((theta.n_t + 1), np.nan)                                # agent decision array
+        a_t   = np.full((theta.n_t + 1), np.nan)                                # action array
+
+        # Task and agent start new round----------------------------------------
+        task.c = c                                                              # round number
+        task.r = 0                                                              # reward
 
         for t in np.arange(theta.n_t):                                          # action iterations
+
+            # ------ TRIAL START -----------------------------------------------
+            task.t = t                                                          # trial
+
+            # Reset dynamic model components
+            agent.v = np.nan                                                    # action valences
+            agent.d = np.nan                                                    # decion
+
+            # task object evaluate observation at trial start # TODO
             s_t[t, :] = task.s                                                  # task state recording
+
+            # agent make decison
+            task.identify_A_giv_s1()
             agent.delta()                                                       # agent decision
-            a        = 0                                                        # agent action
+            d_t[t] = agent.d
+            a        = agent.d                                                  # agent action
+            a_t[t] = a
+
             task.f(a)                                                           # task state-state transition
 
     # output specification
     sim.s_t = s_t                                                               # state sequence
-
+    sim.d_t = d_t                                                               # decision sequence
+    sim.a_t = a_t                                                               # action sequence
+  
     # output specification
     return sim

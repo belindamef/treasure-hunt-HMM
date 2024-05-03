@@ -22,6 +22,7 @@ class th_agent:
         self.c      = np.nan                                                    # current round
         self.t      = np.nan                                                    # current trial
         self.b      = np.nan                                                    # current belief state
+        self.v      = np.nan                                                    # current action valences
         self.d      = np.nan                                                    # current decision
 
     def delta(self):
@@ -35,4 +36,4 @@ class th_agent:
             self    : agent object with updated attribute
                 d   : decision
         """
-        self.d  = 0
+        self.d = np.random.choice(self.task.A_giv_s1, 1)

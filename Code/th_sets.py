@@ -55,7 +55,6 @@ def th_sets(theta, paths):
                 S_s2 = S_s1[S_s1[:, 1] == s2]                                   # state values with agent location s1 and treasure location s2
                 S[idx:idx + S_s2.shape[0], :] = S_s2                            # sorted state value array update
                 idx = idx + S_s2.shape[0]                                       # row index update
-        # TODO: FRAGE: Ist dieser snippet, der S erstellt, nur dafür da, die state values zu sortieren?
 
         np.save(os.path.join(paths.components, "S"), S)                         # save to disc
 
