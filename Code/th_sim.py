@@ -14,7 +14,7 @@ from th_sets import th_sets                                                     
 from th_phi import th_phi                                                       # action-dependent state-state transition probability matrices
 from th_omega import th_omega                                                   # action-dependent state conditional observation probability matrices
 from th_sim_game import th_sim_game                                             # game simulation routine
-
+from th_imshow import plot_agent_behavior                                       # plot function
 
 # directory management
 this_task_config_label = "test"
@@ -65,3 +65,6 @@ sim.theta       = theta                                                         
 sim.t_init      = t_init                                                        # task initialization structure
 sim.a_init      = a_init                                                        # agent initialization structure
 sim             = th_sim_game(sim)                                              # simulate one treasure hunt game
+
+# plot
+plot_agent_behavior(paths=paths, theta=theta, beh_data=sim.data)

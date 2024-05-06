@@ -50,9 +50,15 @@ def th_sim_game(sim):
     for c in np.arange(theta.n_c):                                              # round iterations
 
         # recording arrays # TODO
-        s_t   = np.full((theta.n_t + 1, theta.d_s), np.nan)                     # task state array
-        d_t   = np.full((theta.n_t + 1), np.nan)                                # agent decision array
-        a_t   = np.full((theta.n_t + 1), np.nan)                                # action array
+        s_t           = np.full((theta.n_t + 1, theta.d_s), np.nan)                     # task state array
+        o_t           = np.full((theta.n_t + 1, 1), np.nan)
+        d_t           = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
+        v_t           = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
+        marg_s1_b_t   = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
+        marg_s2_b_t   = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
+        d_t           = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
+        a_t   = np.full((theta.n_t + 1, 1), np.nan)                                # action array
+
 
         # Task and agent start new round----------------------------------------
         task.c = c                                                              # round number
@@ -73,16 +79,32 @@ def th_sim_game(sim):
             # agent make decison
             task.identify_A_giv_s1()
             agent.delta()                                                       # agent decision
-            d_t[t] = agent.d
+            d_t[t, :] = agent.d
             a        = agent.d                                                  # agent action
-            a_t[t] = a
+            a_t[t, :] = a
 
             task.f(a)                                                           # task state-state transition
 
+    # Collect data in dataframe
+    dataframe = pd.DataFrame({
+        's1_t': s_t[:, 0],
+        's2_t': s_t[:, 1],
+        's3_1_t': s_t[:, 2],
+        's3_2_t': s_t[:, 3],
+        's3_3_t': s_t[:, 4],
+        's3_4_t': s_t[:, 5],
+        's3_5_t': s_t[:, 6],
+        's3_6_t': s_t[:, 7],
+        'o_t': o_t[:, 0],
+        'v_t': v_t[:, 0],
+        'marg_s1_b_t': marg_s1_b_t[:, 0],
+        'marg_s2_b_t': marg_s2_b_t[:, 0],
+        'd_t': d_t[:, 0],
+        'a_t': a_t[:, 0]
+    })
+
     # output specification
-    sim.s_t = s_t                                                               # state sequence
-    sim.d_t = d_t                                                               # decision sequence
-    sim.a_t = a_t                                                               # action sequence
-  
+    sim.data = dataframe
+
     # output specification
     return sim
