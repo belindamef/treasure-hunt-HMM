@@ -51,20 +51,19 @@ def th_sim_game(sim):
 
     for c in np.arange(theta.n_c):                                              # round iterations
 
-        variable_list = [
-            "s1_t",
-            "s2_t",
-            "s3_t",
-            "o_t",
-            "v_t",
-            "d_t",
-            "a_t",
-            "r_t",
-            "marg_s1_b_t",
-            "marg_s2_b_t",
-            "marg_s3_b_t",
-            "max_s3_belief",
-            "node_colors"
+        variable_list = [                                                       # list of variables to be recorded
+            "s1_t",                                                             # current position
+            "s2_t",                                                             # treasure location
+            "s3_t",                                                             # hiding spots
+            "o_t",                                                              # observation
+            "v_t",                                                              # action valences
+            "d_t",                                                              # agent decision
+            "a_t",                                                              # action
+            "r_t",                                                              # reward
+            "marg_s1_b_t",                                                      # marginal belief over s1 (current position)
+            "marg_s2_b_t",                                                      # marginal belief over s2 (treasure location)
+            "marg_s3_b_t",                                                      # marginal belief over s3 (hiding spots)
+            "node_colors"                                                       # current node colors (observable)
         ]
 
         round_dict = {}
@@ -87,30 +86,31 @@ def th_sim_game(sim):
             agent.v = np.nan                                                    # action valences
             agent.d = np.nan                                                    # decion
 
-            # task object evaluate observation at trial start # TODO
-            data_one_round.loc[t, "s1_t"] = task.s[0]                                                  # task state recording
-            data_one_round.loc[t, "s2_t"] = task.s[1]                                                  # task state recording
-            data_one_round.loc[t, "s3_t"] = task.s[2:]                                                  # task state recording
+            # trial start recordings
+            data_one_round.loc[t, "s1_t"] = task.s[0]                           # record task state
+            data_one_round.loc[t, "s2_t"] = task.s[1]                           # record task state
+            data_one_round.loc[t, "s3_t"] = task.s[2:]                          # record task state
 
             # agent make decison
-            task.identify_A_giv_s1()
+            task.identify_A_giv_s1()                                            # evaluate set of available actions
             agent.delta()                                                       # agent decision
-            data_one_round.loc[t, "d_t"] = agent.d
+            data_one_round.loc[t, "d_t"] = agent.d                              # record agent decision
             a = agent.d                                                         # agent action
-            data_one_round.loc[t, "a_t"] = a
+            data_one_round.loc[t, "a_t"] = a                                    # record action
 
+            # state transition
             task.f(a)                                                           # task state-state transition
 
         # Create a dataframe from recording array dictionary
         data_one_round.insert(0, "trial", pd.Series(                            # add trial column
             range(1, theta.n_t + 2)))
         data_one_round.insert(0, "round_", c + 1)                               # add round colunn
-        data_one_block = pd.concat(
+        data_one_block = pd.concat(                                             # append this round df to entire block df
             [data_one_block, data_one_round],
             ignore_index=True
         )
 
-    data_one_block.insert(0, "agent", a_init.a_name)
-    sim.data = data_one_block
-    # output specification
+    data_one_block.insert(0, "agent", a_init.a_name)                            # add agent name column
+    sim.data = data_one_block                                                   # output specification
+
     return sim

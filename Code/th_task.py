@@ -76,16 +76,15 @@ class th_task:
 
         Phi_a_s_t = self.Phi[a_i][self.i_s, :].toarray()[0]                     # a-dep. Phi vector giv current s_t
         i_s_tt = np.argmax(                                                     # index of s_{t+1}
-            rv.multinomial.rvs(                                                 # TODO, was wird da zurückgegeben?
+            rv.multinomial.rvs(
                 1, Phi_a_s_t
-                ) != 0
-            )
+            ) != 0
+        )
         s_tt   = self.S[i_s_tt, :]                                              # s_{t+1}
-        # if i_a != 0 and np.sum(self.Phi[i_a][self.s_i, :]) == 0:
-        if a != 0 and np.all(s_tt == self.s):                                           # if after step action the new state is the same as before
+
+        if a != 0 and np.all(s_tt == self.s):                                   # after step action the new state is the same as before
             print("Invalid action")
-            # TODO: dann stop? oder wie signalisieren, dass das trial wiederholt wird?
-            # sollte nicht passieren können, da nur von a_giv_s1 gesampled wird
+            # Das sollte gar nicht erst passieren können, da agent nur von A_giv_s1 wählt
         else:
             self.i_s = i_s_tt
             self.s   = s_tt
@@ -93,11 +92,11 @@ class th_task:
     def g(self):
         """
         This function evaluates the task's observation
-        
+
         Inputs
             self      : task object
                 .r_t  : rewart
-                .""" # TODO: braucht es ? wohl nicht mit Omega?
+                ."""
 
     def identify_A_giv_s1(self):
         """Identify state s1 dependent action set"""
