@@ -64,18 +64,22 @@ def plot_agent_behavior(paths, theta, beh_data):
                             for node in range(n_nodes)]
                     )
 
-                elif component == "o_t":
-                    data[component][:, trial_col] = beh_data["node_colors"][trial_col]  # TODO: hier wieter
-                    if beh_data["o_t"][trial_col][0] == 1:
-                        data[component][:, trial_col][
-                            (beh_data["s2_t"][trial_col] - 1)] = 3
+                # elif component == "o_t":
+                #     data[component][:, trial_col] = beh_data["node_colors"][trial_col]  # TODO: hier wieter
+                #     if beh_data["o_t"][trial_col][0] == 1:
+                #         data[component][:, trial_col][
+                #             (beh_data["s2_t"][trial_col] - 1)] = 3
 
-                elif component in ["marg_s1_b_t", "marg_s2_b_t"]:
-                    data[component][:, trial_col] = beh_data[component][trial_col]
+                # elif component in ["marg_s1_b_t", "marg_s2_b_t"]:
+                #     data[component][:, trial_col] = beh_data[component][trial_col]
 
-                elif component in ["v_t", "d_t", "a_t"]:
+                elif component in [
+                    # "v_t",
+                    "d_t",
+                    "a_t"
+                    ]:
 
-                    # plot curren position along in a grid
+                    # plot current position along in a grid
                     data[component][:, trial_col] = np.array(
                         [1 if node == beh_data["s1_t"][trial_col] - 1 else 0
                             for node in range(n_nodes)]
@@ -242,22 +246,25 @@ def plot_agent_behavior(paths, theta, beh_data):
                 ))
 
         def add_colorbar():
-            divider = make_axes_locatable(axs[row, -1])
-            cax = divider.append_axes("right", size="13%", pad=0.2)
+            axs[row, -1].axis("off")                                            # remove last columns axes
+            if row in [2, 3, 4]:
+                divider = make_axes_locatable(axs[row, -1])
+                cax = divider.append_axes("right", pad=0.0001, size="20%")
+                ticks = cmap_ticks[component]
 
-            ticks = cmap_ticks[component]
+                cbar = fig.colorbar(
+                    images[(row + 1) * n_plotable_trials - 1],
+                    cax,
+                    orientation='vertical',
+                    ticks=ticks
+                )
 
-            fig.colorbar(
-                images[(row + 1) * n_plotable_trials - 1],
-                cax,
-                orientation='vertical',
-                ticks=ticks
-            )
+                cbar.ax.tick_params(labelsize=6)                          # Set fontsize for colorbar ticks
+                # Explicitly update colorbar layout engine
+                cax.get_yaxis().set_label_coords(-0.5, 0.5)
+                cax.xaxis.set_label_position('top')
+                cax.xaxis.set_ticks_position('top')
 
-            # Explicitly update colorbar layout engine
-            cax.get_yaxis().set_label_coords(-0.5, 0.5)
-            cax.xaxis.set_label_position('top')
-            cax.xaxis.set_ticks_position('top')
 
         # ------ Start Plotting Rountine ----------------------------------
         images = []
@@ -270,6 +277,7 @@ def plot_agent_behavior(paths, theta, beh_data):
 
                 # Specify this axis
                 this_ax = axs[row, trial_col]
+
                 # Crate heatmap and append to image list
                 images.append(draw_heatmap_to_this_ax())
                 # Adjust ticks, labels and grid
@@ -290,11 +298,10 @@ def plot_agent_behavior(paths, theta, beh_data):
                             beh_data["s1_t"][trial_col]
                         )
 
-                        # TODO: not tested yet ..........
                         if d_or_a == 0:
                             draw_drill(
-                                start_x=axis_x_coords[s1_t_x],
-                                start_y=axis_y_coords[s1_t_y],
+                                start_x=axis_x_coords[s1_t_x] - 1,
+                                start_y=axis_y_coords[s1_t_y] - 1,
                                 dx=1, dy=1
                             )
 
@@ -310,32 +317,33 @@ def plot_agent_behavior(paths, theta, beh_data):
                                 color=arrow_colors[component]
                             )
 
-                if component == "v_t":
+                # if component == "v_t":
 
-                    v_t = beh_data["v_t"][trial_col]
-                    if not np.any(np.isnan(v_t)):
-                        axis_x_coords, axis_y_coords = return_axis_coords()
+                #     v_t = beh_data["v_t"][trial_col]
+                #     if not np.any(np.isnan(v_t)):
+                #         axis_x_coords, axis_y_coords = return_axis_coords()
 
-                        # TODO: hier weiter
-                        v_t.sort()
+                #         # TODO: hier weiter
+                #         v_t.sort()
 
-                        a_giv_s1 = beh_data["a_giv_s1"][trial_col]
+                #         a_giv_s1 = beh_data["a_giv_s1"][trial_col]
 
-                        for possible_a in a_giv_s1:
+                #         for possible_a in a_giv_s1:
 
-                            arrow_coords = specify_arrow_coordinates(
-                                pos_1=beh_data["s1_t"][trial_col],
-                                pos_2=beh_data["s1_t"][trial_col]
-                                + possible_a
-                            )
+                #             arrow_coords = specify_arrow_coordinates(
+                #                 pos_1=beh_data["s1_t"][trial_col],
+                #                 pos_2=beh_data["s1_t"][trial_col]
+                #                 + possible_a
+                #             )
 
-                            draw_arrow(
-                                arrow_coords=arrow_coords,
-                                color="lightgrey"
-                            )
+                #             draw_arrow(
+                #                 arrow_coords=arrow_coords,
+                #                 color="lightgrey"
+                #            )
             add_colorbar()
 
         return images
+
 
     dim = theta.d                                                               # dimensionality of square grid world
     n_nodes = theta.n_n                                                         # number nodes in gridworld
@@ -360,14 +368,15 @@ def plot_agent_behavior(paths, theta, beh_data):
 
     fig, axs = plt.subplots(
         n_rows,
-        n_plotable_trials,
+        n_plotable_trials + 1,
         sharex=True, sharey=True,
-        layout="constrained"
+        # layout="constrained"
         # figsize=(9, 4)
     )
 
-    fig.suptitle(f"Belief State Update. Agent {beh_data['agent'][0]} . "
-                 r"$\tau = $" f"{beh_data['tau_gen'][0]}")
+    fig.suptitle(f"Agent {beh_data['agent'][0]} behavior "
+                 #r"$\tau = $" f"{beh_data['tau_gen'][0]}"
+                 )
 
     y_labels = define_y_labels()
 
@@ -381,8 +390,12 @@ def plot_agent_behavior(paths, theta, beh_data):
 
     images = create_images()
 
-    fig_fn = (f"belief_update_{theta.n_n}-nodes"
-              f"_{theta.n_h}-hides"
-              f"_agent-{beh_data['agent'][0]}")
+    fig_fn = (
+        f"agent-{beh_data['agent'][0]}"
+        f"_{theta.n_n}-nodes"
+        f"_{theta.n_h}-hides"
+    )
     fig_path = os.path.join(paths.figures, fig_fn)
-    fig.savefig(f"{fig_path}.pdf", dpi=200, format='pdf')
+    fig.savefig(f"{fig_path}.pdf",
+                #dpi=200,
+                format='pdf')

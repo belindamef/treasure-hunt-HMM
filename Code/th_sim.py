@@ -54,6 +54,7 @@ t_init.Phi      = Phi                                                           
 
 # agent initialization structure
 a_init          = th_structure()                                                # task initialization structure
+a_init.a_name   = "C1"                                                          # agent label
 a_init.Omega    = Omega                                                         # action-dependent state conditional observation probability matrices
 
 # simulation
@@ -66,5 +67,16 @@ sim.t_init      = t_init                                                        
 sim.a_init      = a_init                                                        # agent initialization structure
 sim             = th_sim_game(sim)                                              # simulate one treasure hunt game
 
-# plot
+# plot agent behavior
 plot_agent_behavior(paths=paths, theta=theta, beh_data=sim.data)
+
+# save data to tsv
+this_sub_dir = os.path.join(paths.data, f"sub-{a_init.a_name}",
+                            "beh")
+if not os.path.exists(this_sub_dir):
+    os.makedirs(this_sub_dir)
+data_path = os.path.join(this_sub_dir, f"sub-{a_init.a_name}_beh")
+
+with open(f"{data_path}.tsv", "w", encoding="utf8") as tsv_file:
+    tsv_file.write(sim.data.to_csv(sep="\t", na_rep="nan", index=False)
+                   )

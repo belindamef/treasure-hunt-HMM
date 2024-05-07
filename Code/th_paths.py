@@ -21,6 +21,9 @@ class th_paths():
         self.figures    = os.path.join(                                         # path to figures
             "Figures", f"dim-{d}_hide-{n_h}"
         )
+        self.data       = os.path.join(                                         # path to data
+            "Data", f"dim-{d}_hide-{n_h}"
+        )
         self.make_directories()
 
     def make_directories(self):

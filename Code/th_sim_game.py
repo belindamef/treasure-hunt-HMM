@@ -47,18 +47,32 @@ def th_sim_game(sim):
     # --------------------------------------------------------------------------
     task.start_game()                                                           # game start configuration
 
+    data_one_block = pd.DataFrame()                                             # init df for one block
+
     for c in np.arange(theta.n_c):                                              # round iterations
 
-        # recording arrays # TODO
-        s_t           = np.full((theta.n_t + 1, theta.d_s), np.nan)                     # task state array
-        o_t           = np.full((theta.n_t + 1, 1), np.nan)
-        d_t           = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
-        v_t           = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
-        marg_s1_b_t   = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
-        marg_s2_b_t   = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
-        d_t           = np.full((theta.n_t + 1, 1), np.nan)                                # agent decision array
-        a_t   = np.full((theta.n_t + 1, 1), np.nan)                                # action array
+        variable_list = [
+            "s1_t",
+            "s2_t",
+            "s3_t",
+            "o_t",
+            "v_t",
+            "d_t",
+            "a_t",
+            "r_t",
+            "marg_s1_b_t",
+            "marg_s2_b_t",
+            "marg_s3_b_t",
+            "max_s3_belief",
+            "node_colors"
+        ]
 
+        round_dict = {}
+        for var in variable_list:
+            round_dict[var] = np.full(
+                theta.n_t + 1, np.nan, dtype=object)
+
+        data_one_round = pd.DataFrame(round_dict)
 
         # Task and agent start new round----------------------------------------
         task.c = c                                                              # round number
@@ -74,37 +88,29 @@ def th_sim_game(sim):
             agent.d = np.nan                                                    # decion
 
             # task object evaluate observation at trial start # TODO
-            s_t[t, :] = task.s                                                  # task state recording
+            data_one_round.loc[t, "s1_t"] = task.s[0]                                                  # task state recording
+            data_one_round.loc[t, "s2_t"] = task.s[1]                                                  # task state recording
+            data_one_round.loc[t, "s3_t"] = task.s[2:]                                                  # task state recording
 
             # agent make decison
             task.identify_A_giv_s1()
             agent.delta()                                                       # agent decision
-            d_t[t, :] = agent.d
-            a        = agent.d                                                  # agent action
-            a_t[t, :] = a
+            data_one_round.loc[t, "d_t"] = agent.d
+            a = agent.d                                                         # agent action
+            data_one_round.loc[t, "a_t"] = a
 
             task.f(a)                                                           # task state-state transition
 
-    # Collect data in dataframe
-    dataframe = pd.DataFrame({
-        's1_t': s_t[:, 0],
-        's2_t': s_t[:, 1],
-        's3_1_t': s_t[:, 2],
-        's3_2_t': s_t[:, 3],
-        's3_3_t': s_t[:, 4],
-        's3_4_t': s_t[:, 5],
-        's3_5_t': s_t[:, 6],
-        's3_6_t': s_t[:, 7],
-        'o_t': o_t[:, 0],
-        'v_t': v_t[:, 0],
-        'marg_s1_b_t': marg_s1_b_t[:, 0],
-        'marg_s2_b_t': marg_s2_b_t[:, 0],
-        'd_t': d_t[:, 0],
-        'a_t': a_t[:, 0]
-    })
+        # Create a dataframe from recording array dictionary
+        data_one_round.insert(0, "trial", pd.Series(                            # add trial column
+            range(1, theta.n_t + 2)))
+        data_one_round.insert(0, "round_", c + 1)                               # add round colunn
+        data_one_block = pd.concat(
+            [data_one_block, data_one_round],
+            ignore_index=True
+        )
 
-    # output specification
-    sim.data = dataframe
-
+    data_one_block.insert(0, "agent", a_init.a_name)
+    sim.data = data_one_block
     # output specification
     return sim
