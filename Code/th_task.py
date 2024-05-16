@@ -9,7 +9,7 @@ class th_task:
         task class.
 
         Inputs
-            t_init  : task initialization parameter structure with fields
+            t_init      : task initialization parameter structure with fields
                 .theta  : task parameters
                 .S      : state set
                 .O      : observation set
@@ -64,11 +64,15 @@ class th_task:
         This function evaluates the task's state-state transition function.
 
         Inputs
-            self    : task object
-            a       : agent action
+            self     : task object
+                .i_s : state index
+                .s   : state
+                .S   : state setN
+                .Phi : action-dependent state-state transition probability
+            a        : action in trial t
 
         Outputs
-            self      : task object with updated attribute
+            self      : task object with updated attributes
                 .i_s  : task state index
                 .s    : task state
         """

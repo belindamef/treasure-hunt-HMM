@@ -4,7 +4,6 @@ a single game of the treasure hunt task.
 
 Authors - Belinda Fleischmann, Dirk Ostwald
 """
-# dependencies
 import numpy as np                                                              # numpy
 import os                                                                       # operating system interface
 from th_structure import th_structure                                           # structures
@@ -16,11 +15,11 @@ from th_omega import th_omega                                                   
 from th_sim_game import th_sim_game                                             # game simulation routine
 from th_imshow import plot_agent_behavior                                       # plot function
 
-# directory management
+# Directory management
 this_task_config_label = "test"
 paths = th_structure()
 
-# task parameters
+# Task parameters
 theta           = th_structure()                                                # simulation structure initialization
 theta.d         = 5                                                             # dimension of the square grid world
 theta.n_n       = theta.d ** 2                                                  # number of grid world cells/nodes
@@ -32,19 +31,20 @@ theta           = th_cards(theta)                                               
 
 # define path to model components
 
+# Define path to model components
 paths = th_paths(theta)
 
-# task sets
+# Task sets
 theta           = th_sets(theta, paths)                                         # task/agent model state, observation, decision, and action set creation
 S               = np.load(os.path.join(paths.components, "S.npy"))              # state set
 O               = np.load(os.path.join(paths.components, "O.npy"))              # observation set
 A               = np.load(os.path.join(paths.components, "A.npy"))              # action set
 
-# stochastic matrices
+# Stochastic matrices
 Phi             = th_phi(S, A, theta, paths)                                    # action-dependent state-state transition probability matrices
 Omega           = th_omega(S, O, theta, paths)                                  # action-dependent state conditional observation probability matrices
 
-# task initialization structure
+# Task initialization structure
 t_init          = th_structure()                                                # task initialization structure
 t_init.theta    = theta                                                         # task parameters
 t_init.S        = S                                                             # state set
@@ -52,7 +52,7 @@ t_init.O        = O                                                             
 t_init.A        = A                                                             # action set
 t_init.Phi      = Phi                                                           # action-dependent state-state transition probability matrix
 
-# agent initialization structure
+# Agent initialization structure
 a_init          = th_structure()                                                # task initialization structure
 a_init.a_name   = "C1"                                                          # agent label
 a_init.Omega    = Omega                                                         # action-dependent state conditional observation probability matrices

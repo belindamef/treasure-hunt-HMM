@@ -2,7 +2,7 @@ import numpy as np                                                              
 import pandas as pd                                                             # Pandas
 from th_task import th_task                                                     # task model module
 from th_agent import th_agent                                                   # agent model module
-import logging
+
 
 def th_sim_game(sim):
     """
@@ -35,7 +35,7 @@ def th_sim_game(sim):
     mode                = sim.mode                                              # simulation mode
     theta               = sim.theta                                             # simulation parameters
 
-    # task, agent, and behavioral model instantiation
+    # Task, agent, and behavioral model instantiation
     t_init              = sim.t_init                                            # task initialization structure
     a_init              = sim.a_init                                            # agent initialization structure
     task                = th_task(t_init)                                       # task object
@@ -43,7 +43,7 @@ def th_sim_game(sim):
     agent               = th_agent(a_init)                                      # agent initialization
     pi                  = np.array([2, 3, 4, 1])                                # TODO: decision policy, um zu zeigen, dass der agent mit vorgegebenen actions \pi rum geht 
 
-    # task agent interaction observation
+    # Task agent interaction simulation
     # --------------------------------------------------------------------------
     task.start_game()                                                           # game start configuration
 
