@@ -4,21 +4,20 @@ import scipy.stats as rv
 
 class th_task:
     def __init__(self, t_init):
-        """
-        This function encodes the instantiation method of the treasure hunt
+        """This function encodes the instantiation method of the treasure hunt
         task class.
 
         Inputs
-            t_init      : task initialization parameter structure with fields
-                .theta  : task parameters
-                .S      : state set
-                .O      : observation set
-                .A      : action set
-                .Phi    : action-dependent state-state transition probability
+            t_init      (obj) : task initialization parameter structure with fields
+                .theta  (obj) : task parameters
+                .S      (arr) : n_s x (2 + n_h) array of state values
+                .O      (arr) : n_n x 2 array of observation values
+                .A      (arr) : 5 x 1 array of action values
+                .Phi    (arr) : n_s x n_s x 5 matrices array of state transition probabilities
 
         Authors - Belinda Fleischmann, Dirk Ostwald
         """
-        # structural components
+        # Structural components
         self.theta       = t_init.theta                                         # task parameters
         self.S           = t_init.S                                             # state set
         self.O           = t_init.O                                             # observation set
@@ -26,12 +25,12 @@ class th_task:
         self.Phi         = t_init.Phi                                           # action-dependent state-state transition probability
         self.A_giv_s1    = np.nan                                               # state-dependent action set
 
-        # dynamic components
+        # Dynamic components
         self.c           = np.nan                                               # current round
         self.t           = np.nan                                               # current trial
         self.s           = np.nan                                               # task state  # TODO 8 values??
         self.i_s         = np.nan                                               # state index
-        self.o           = np.nan                                               # task observation
+        self.o           = np.full(2, np.nan, dtype=int)                        # task observation
         self.a           = np.nan                                               # agent action
         self.r           = np.nan                                               # reward
         self.node_colors = np.nan                                               # current node colors
@@ -44,12 +43,12 @@ class th_task:
         location.
 
         Inputs
-                self    : task object
+                self   (obj) : task object
 
         Outputs
-                self    : task object with updated attributes
-                    .s_i: task state index
-                    .s  : task state
+                self     (obj) : task object with updated attributes
+                    .s_i (int) : task state index
+                    .s   (arr) : 1 x (n_h + 2) array of current task state
         """
 
         while True:
@@ -60,21 +59,20 @@ class th_task:
                 break
 
     def f(self, a):
-        """
-        This function evaluates the task's state-state transition function.
+        """This function evaluates the task's state-state transition function.
 
         Inputs
-            self     : task object
-                .i_s : state index
-                .s   : state
-                .S   : state setN
-                .Phi : action-dependent state-state transition probability
-            a        : action in trial t
+            self     (obj) : task object
+                .i_s (int) : state index
+                .s   (arr) : 1 x (n_h + 2) array of current task state (to be updated)
+                .S   (arr) : n_s x (2 + n_h) array of state values
+                .Phi (arr) : n_s x n_s x 5 matrices array of state transition probabilities
+            a        (int) : action in trial t
 
         Outputs
-            self      : task object with updated attributes
-                .i_s  : task state index
-                .s    : task state
+            self     (obj) : task object with updated attributes
+                .i_s (int) : task state index
+                .s   (arr) : 1 x (n_h + 2) array of current task state (updated)
         """
         a_i = int(np.where(self.A == a)[0])                                     # action index
 
@@ -103,7 +101,19 @@ class th_task:
                 ."""
 
     def identify_A_giv_s1(self):
-        """Identify state s1 dependent action set"""
+        """This function evaluates the state dependent set of actions
+
+        Inputs
+            self           (obj) : task object
+                .A         (arr) : 5 x 1 array of action values
+                .s         (arr) : 1 x (n_h + 2) array of current task state (updated)
+                .theta.d   (int) : dimensionality of the square grid world
+                .theta.n_n (int) : number of nodes
+
+        Outputs
+            self           (obj) : task object with updated attributes
+                .A_giv_s1  (arr) : n_A_s1 x 1 array of action values TODO: varying n_A_s1
+        """
         self.A_giv_s1 = self.A
 
         for action in self.A:

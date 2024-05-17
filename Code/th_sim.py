@@ -34,7 +34,7 @@ theta.lambda_   = np.nan                                                        
 paths = th_paths(theta, out_directory_label="test")                             # object to store path variables
 
 # Task sets
-theta           = th_sets(theta, paths)                                         # task/agent model state, observation, decision, and action set creation
+th_sets(theta, paths)                                                           # task/agent model state, observation, decision, and action set creation
 S               = np.load(os.path.join(paths.components, "S.npy"))              # state set
 O               = np.load(os.path.join(paths.components, "O.npy"))              # observation set
 A               = np.load(os.path.join(paths.components, "A.npy"))              # action set
@@ -57,7 +57,7 @@ a_init.a_name   = "C1"                                                          
 a_init.Omega    = Omega                                                         # action-dependent state conditional observation probability matrices
 
 # Behavioral model initialization structure
-m_init          = th_structure()                                                 # behavioral model initialization structure
+m_init          = th_structure()                                                # behavioral model initialization structure
 m_init.theta    = theta
 
 # Simulation
@@ -71,10 +71,10 @@ sim.a_init      = a_init                                                        
 sim.m_init      = m_init                                                        # behavioral model initialization structure
 sim             = th_sim_game(sim)                                              # simulate one treasure hunt game
 
-# plot agent behavior
+# Plot agent behavior
 plot_agent_behavior(paths=paths, theta=theta, beh_data=sim.data)
 
-# save data to tsv
+# Save data to tsv
 this_sub_dir = os.path.join(paths.data, f"sub-{a_init.a_name}", "beh")          # path to this agent subject's data folder
 if not os.path.exists(this_sub_dir):                                            # check if agent subject's data folder exists
     os.makedirs(this_sub_dir)                                                   # create directory for this agent subject's data

@@ -8,10 +8,8 @@ class th_agent:
         agent class.
 
         Inputs
-            a_init     : agent initialization parameter structure with fields
-                .task  : dimensionality of the square grid world
-        Output
-            initialized agent object
+            a_init     (obj) : agent initialization parameter structure with fields
+                .task  (obj) : task object
 
         Authors - Belinda Fleischmann, Dirk Ostwald
         """
@@ -30,10 +28,11 @@ class th_agent:
         This function implements the agent's decision function delta.
 
         Input
-            self    : agent object
+            self   (obj) : agent object
 
         Output
-            self    : agent object with updated attribute
-                d   : decision
+            self   (obj) : agent object with updated attribute
+                .d (int) : decision
         """
         self.d = np.random.choice(self.task.A_giv_s1, 1)
+        return self.d

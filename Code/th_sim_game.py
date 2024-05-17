@@ -6,8 +6,7 @@ from th_agent import th_agent                                                   
 
 
 def th_sim_game(sim):
-    """
-    This function simulates the experimental observation of an interaction
+    """This function simulates the experimental observation of an interaction
     between the treasure hunt task and an agent model on a single game.
     It works in two fundamental modes:
 
@@ -17,19 +16,18 @@ def th_sim_game(sim):
       actions) are not sampled, but read from the experimental data set.
 
     Inputs:
-        sim  : structure with fields
-            .p      : participant index
-            .mode   : simulation mode
-         .g      : game index
-               .theta  : simulation parameters
-            .t_init : task initialization structure
-            .a_init : agent initialization structure
-            .m_init : behavioral model initialization structure
-
+        sim         (obj) : simulation structure
+            .mode   (str) : simulation mode
+            .p      (int) : participant index
+            .g      (int) : game index
+            .theta  (obj) : simulation parameters
+            .a_init (obj) : agent initialization structure
+            .t_init (obj) : task initialization structure
+            .m_init (obj) : behavioral model initialization structure
 
     Outputs
-        sim  : structure equivalent with additional fields
-            .sim    : game simulation dictionary
+        sim         (obj) : simulation structure with additional fields
+            .data   (df)  : Dataframe with simulated behavioral data
 
     Author - Belinda Fleischmann, Dirk Ostwald
     """
@@ -85,38 +83,48 @@ def th_sim_game(sim):
         for t in np.arange(theta.n_t):                                          # action iterations
 
             # ------ TRIAL START -----------------------------------------------
-            task.t = t                                                          # trial
+            task.t = t                                                          # trial number
+
+            o = task.g()                                                            # evaluate observation o
+            # tODO: agent update belief state
 
             # Reset dynamic model components
             agent.v = np.nan                                                    # action valences
-            agent.d = np.nan                                                    # decion
+            agent.d = np.nan                                                    # decison
 
             # trial start recordings
-            data_one_round.loc[t, "s1_t"] = task.s[0]                           # record task state
-            data_one_round.loc[t, "s2_t"] = task.s[1]                           # record task state
-            data_one_round.loc[t, "s3_t"] = task.s[2:]                          # record task state
+            data_one_round.loc[t, "s1_t"] = task.s[0]                           # record first task state s^1
+            data_one_round.loc[t, "s2_t"] = task.s[1]                           # record second task state s^2
+            data_one_round.loc[t, "s3_t"] = task.s[2:]                          # record third task state s^3
+            data_one_round.loc[t, "o_t"]  = task.o[:]                               # record observation o
 
+            # ------- TRIAL INTERACTION ----------------------------------------
             # agent make decison
             task.identify_A_giv_s1()                                            # evaluate set of available actions
-            agent.delta()                                                       # agent decision
+            d = agent.delta()                                                   # agent decision
             # TODO: see for-deletion in agent.make_decision() for what's still missing
-            data_one_round.loc[t, "d_t"] = agent.d                              # record agent decision
             a = model.return_action()                                           # agent action
+            data_one_round.loc[t, "d_t"] = d                                    # record agent decision
             data_one_round.loc[t, "a_t"] = a                                    # record action
 
             # state transition
             task.f(a)                                                           # task state-state transition
 
-        # Create a dataframe from recording array dictionary
-        data_one_round.insert(0, "trial", pd.Series(                            # add trial column
-            range(1, theta.n_t + 2)))
-        data_one_round.insert(0, "round_", c + 1)                               # add round colunn
+            # ------ END OF ONE TRIAL ------
+
+        # Create a dataframe this round's data from recording array dictionary
+        data_one_round.insert(0, "trial", pd.Series(range(1, theta.n_t + 2)))   # add trial column for trials {1, ..., T + 1}
+        data_one_round.insert(0, "round_", c + 1)                               # add round column
         data_one_block = pd.concat(                                             # append this round df to entire block df
             [data_one_block, data_one_round],
             ignore_index=True
         )
 
+        # ------ END OF ONE ROUND ------
+
     data_one_block.insert(0, "agent", a_init.a_name)                            # add agent name column
     sim.data = data_one_block                                                   # output specification
+
+    # ------ END OF ONE GAME ------
 
     return sim

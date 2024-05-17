@@ -12,15 +12,16 @@ def th_omega(S, O, theta, paths):
     hunt task.
 
     Inputs:
-        theta     : task parameter structure with required fields
-            .n_s  : state space cardinality
-            .n_o  : observation space cardinality
-            .n_a  : action space cardinality
-        S         : n_s x 1 + n_h array
-        O         : n_n x 2 array of observation values
+        theta    (obj) : task parameter structure with required fields
+            .d   (int) : dimension of square grid world
+            .n_s (int) : state space cardinality
+            .n_o (int) : observation space cardinality
+        S        (arr) : n_s x 1 + n_h array
+        O        (arr) : n_n x 2 array of observation values
+        paths    (obj) : paths object storing directory path variables
 
     Outputs:
-        Omega   : n_s x n_o x 2 observation probability distribution
+        Omega    (arr) : n_s x n_o x 2 observation probability distribution
 
     """
     # Task parameters and set cardinalities

@@ -9,11 +9,10 @@ class th_model:
         behavioral model class.
 
         Inputs
-            m_init      : model initialization parameter structure with fields
-                .agent  : agent object
-                .task   : task object
-                .tau    : post-decision noise parameter
-
+            m_init     (obj) : model initialization parameter structure with fields
+                .agent (obj) : agent object
+                .task  (obj) : task object
+                .tau   (obj) : post-decision noise parameter
 
         Authors - Belinda Fleischmann, Dirk Ostwald
         """
@@ -27,14 +26,13 @@ class th_model:
         of actions given the history of actions and observations and tau
 
         Input
-            self              : model object
-                .tau          : post decision parameter
-            agent
-                .v            : current action valences
+            self              (obj) : model object
+                .tau        (float) : post decision parameter
+                .agent.v      (arr) : (1 X n_A_s1?) array current action valences TODO: varying n_A_s1
 
         Output
-            self              : model object with updated attribute
-                .p_a_giv_hist : probability distribution of action given the history of actions and observations
+            self              (obj) : model object with updated attribute
+                .p_a_giv_hist (arr) : (1 X n_A_s1?) array representing the probability distribution of action given the history of actions and observations
         """
         return np.exp((1 / self.tau) * self.agent.v) / sum(
             np.exp((1 / self.tau) * self.agent.v))
@@ -43,14 +41,16 @@ class th_model:
         """This function returns an action given the agent's decision or
         valence functions
 
-        Input
-            self               : model object
-                .tau           : post decision parameter
-                .agent.d       : agent decision in trial t
-                .task.A_giv_s1 : state-dependent action set
-        Output
-            self               : model object with updated attribute
-                .a             : action in trial t
+        Inputs
+            self               (obj) : model object
+                .tau         (float) : post decision parameter
+
+                .agent.d       (int) : agent decision in trial t
+                .task.A_giv_s1 (arr) : (1 X n_A_s1?) array of state-dependent action set TODO: varying n_A_s1
+
+        Outputs
+            self               (obj) : model object with updated attribute
+                .a             (int) : action in trial t
         """
         # Direct transmission of agent decision to action
         if (np.isnan(self.tau) or self.tau == 0):

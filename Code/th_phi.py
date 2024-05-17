@@ -15,19 +15,20 @@ def th_phi(S, A, theta, paths):
     evaluated and saved to disk.
 
     Inputs
-        theta     : task parameter structure with required fields
-            .n_n  : number of nodes
-            .n_h  : number of hiding spots
-            .n_s  : state space cardinality
-            .n_a  : action space cardinality
-        S         : n_s x 1 + n_h state set array
-        A         : n_a x 0 action set array
+        theta    (obj) : task parameter structure with required fields
+            .n_n (int) : number of nodes
+            .n_h (int) : number of hiding spots
+            .n_s (int) : state space cardinality
+            .n_a (int) : action space cardinality
+        S        (arr) : n_s x 1 + n_h state set array
+        A        (arr) : n_a x 0 action set array
+        paths    (obj) : paths object storing directory path variables
 
     Outputs
-        Phi      : n_s x n_s x 5 transition probability matrices array
+        Phi      (arr) : n_s x n_s x 5 matrices array of state transition probabilities
 
-    Saves to disk (if not existing)
-        Phi.npy  : n_s x n_s x 5 transition probability matrices array
+    Saves to disk, if not existing
+        Phi.npy        : n_s x n_s x 5 transition probability matrices array
 
     Authors - Belinda Fleischmann, Dirk Ostwald
     """
