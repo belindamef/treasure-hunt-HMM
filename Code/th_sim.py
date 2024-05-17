@@ -29,7 +29,9 @@ theta.n_c       = 1                                                             
 theta.n_t       = 12                                                            # maximal number of actions per round
 theta           = th_cards(theta)                                               # task sets' cardinalities
 
-# define path to model components
+# Model parameters  # TODO: [FRAGE] Macht es hier Sinn? Oder eher parameter spaces definieren?
+theta.tau       = np.nan                                                        # post-decision noise parameter
+theta.lambda_   = np.nan                                                        
 
 # Define path to model components
 paths = th_paths(theta)
@@ -57,7 +59,11 @@ a_init          = th_structure()                                                
 a_init.a_name   = "C1"                                                          # agent label
 a_init.Omega    = Omega                                                         # action-dependent state conditional observation probability matrices
 
-# simulation
+# Behavioral model initialization structure
+m_init          = th_structure()                                                 # behavioral model initialization structure
+m_init.theta    = theta
+
+# Iimulation
 sim             = th_structure()                                                # game simulation structure initialization
 sim.p           = 1                                                             # participant index
 sim.g           = 1                                                             # game index
@@ -65,6 +71,7 @@ sim.mode        = "simulation"                                                  
 sim.theta       = theta                                                         # simulation parameters
 sim.t_init      = t_init                                                        # task initialization structure
 sim.a_init      = a_init                                                        # agent initialization structure
+sim.m_init      = m_init                                                        # behavioral model initialization structure
 sim             = th_sim_game(sim)                                              # simulate one treasure hunt game
 
 # plot agent behavior

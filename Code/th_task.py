@@ -19,12 +19,12 @@ class th_task:
         Authors - Belinda Fleischmann, Dirk Ostwald
         """
         # structural components
-        self.theta    = t_init.theta                                            # task parameters
-        self.S        = t_init.S                                                # state set
-        self.O        = t_init.O                                                # observation set
-        self.A        = t_init.A                                                # action set
-        self.Phi      = t_init.Phi                                              # action-dependent state-state transition probability
-        self.A_giv_s1 = np.nan                                                  # state-dependent action set
+        self.theta       = t_init.theta                                         # task parameters
+        self.S           = t_init.S                                             # state set
+        self.O           = t_init.O                                             # observation set
+        self.A           = t_init.A                                             # action set
+        self.Phi         = t_init.Phi                                           # action-dependent state-state transition probability
+        self.A_giv_s1    = np.nan                                               # state-dependent action set
 
         # dynamic components
         self.c           = np.nan                                               # current round
@@ -76,7 +76,7 @@ class th_task:
                 .i_s  : task state index
                 .s    : task state
         """
-        a_i = int(np.where(self.A == a)[0])
+        a_i = int(np.where(self.A == a)[0])                                     # action index
 
         Phi_a_s_t = self.Phi[a_i][self.i_s, :].toarray()[0]                     # a-dep. Phi vector giv current s_t
         i_s_tt = np.argmax(                                                     # index of s_{t+1}
@@ -84,14 +84,14 @@ class th_task:
                 1, Phi_a_s_t
             ) != 0
         )
-        s_tt   = self.S[i_s_tt, :]                                              # s_{t+1}
+        s_tt = self.S[i_s_tt, :]                                                # s_{t+1}
 
         if a != 0 and np.all(s_tt == self.s):                                   # after step action the new state is the same as before
             print("Invalid action")
             # Das sollte gar nicht erst passieren können, da agent nur von A_giv_s1 wählt
         else:
-            self.i_s = i_s_tt
-            self.s   = s_tt
+            self.i_s = i_s_tt                                                   # s_{t} index
+            self.s   = s_tt                                                     # s_{t}
 
     def g(self):
         """

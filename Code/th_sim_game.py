@@ -1,5 +1,6 @@
 import numpy as np                                                              # NumPy
 import pandas as pd                                                             # Pandas
+from th_model import th_model
 from th_task import th_task                                                     # task model module
 from th_agent import th_agent                                                   # agent model module
 
@@ -23,7 +24,7 @@ def th_sim_game(sim):
                .theta  : simulation parameters
             .t_init : task initialization structure
             .a_init : agent initialization structure
-            .m_init : model initialization structure
+            .m_init : behavioral model initialization structure
 
 
     Outputs
@@ -38,9 +39,13 @@ def th_sim_game(sim):
     # Task, agent, and behavioral model instantiation
     t_init              = sim.t_init                                            # task initialization structure
     a_init              = sim.a_init                                            # agent initialization structure
+    m_init              = sim.m_init                                            # behavioral model initialization structure
     task                = th_task(t_init)                                       # task object
     a_init.task         = task                                                  # task embedding
     agent               = th_agent(a_init)                                      # agent initialization
+    m_init.task         = task                                                  # task embedding
+    m_init.agent        = agent                                                 # agent embedding
+    model               = th_model(m_init)                                      # model object
     pi                  = np.array([2, 3, 4, 1])                                # TODO: decision policy, um zu zeigen, dass der agent mit vorgegebenen actions \pi rum geht 
 
     # Task agent interaction simulation
@@ -94,8 +99,9 @@ def th_sim_game(sim):
             # agent make decison
             task.identify_A_giv_s1()                                            # evaluate set of available actions
             agent.delta()                                                       # agent decision
+            # TODO: see for-deletion in agent.make_decision() for what's still missing
             data_one_round.loc[t, "d_t"] = agent.d                              # record agent decision
-            a = agent.d                                                         # agent action
+            a = model.return_action()                                           # agent action
             data_one_round.loc[t, "a_t"] = a                                    # record action
 
             # state transition
