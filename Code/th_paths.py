@@ -12,17 +12,18 @@ class th_paths():
             .d    : dimension of the square grid world
             .n_h  : number of treasure hiding spots
     """
-    def __init__(self, theta):
-        d   = theta.d
-        n_h = theta.n_h
+    def __init__(self, theta, out_directory_label):
+        d            = theta.d
+        n_h          = theta.n_h
+        config_label = f"dim-{d}_hide-{n_h}"
         self.components = os.path.join(                                         # path to model components
-            "Components", f"dim-{d}_hide-{n_h}"
+            "Components", config_label
         )
         self.figures    = os.path.join(                                         # path to figures
-            "Figures", f"dim-{d}_hide-{n_h}"
+            "Figures", f"{out_directory_label}_{config_label}"
         )
         self.data       = os.path.join(                                         # path to data
-            "Data", f"dim-{d}_hide-{n_h}"
+            "Data", f"{out_directory_label}_{config_label}"
         )
         self.make_directories()
 

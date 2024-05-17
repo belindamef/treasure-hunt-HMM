@@ -15,9 +15,6 @@ from th_omega import th_omega                                                   
 from th_sim_game import th_sim_game                                             # game simulation routine
 from th_imshow import plot_agent_behavior                                       # plot function
 
-# Directory management
-this_task_config_label = "test"
-paths = th_structure()
 
 # Task parameters
 theta           = th_structure()                                                # simulation structure initialization
@@ -31,10 +28,10 @@ theta           = th_cards(theta)                                               
 
 # Model parameters  # TODO: [FRAGE] Macht es hier Sinn? Oder eher parameter spaces definieren?
 theta.tau       = np.nan                                                        # post-decision noise parameter
-theta.lambda_   = np.nan                                                        
+theta.lambda_   = np.nan                                                        # weighting parameter for agent A3
 
 # Define path to model components
-paths = th_paths(theta)
+paths = th_paths(theta, out_directory_label="test")                             # object to store path variables
 
 # Task sets
 theta           = th_sets(theta, paths)                                         # task/agent model state, observation, decision, and action set creation
@@ -63,7 +60,7 @@ a_init.Omega    = Omega                                                         
 m_init          = th_structure()                                                 # behavioral model initialization structure
 m_init.theta    = theta
 
-# Iimulation
+# Simulation
 sim             = th_structure()                                                # game simulation structure initialization
 sim.p           = 1                                                             # participant index
 sim.g           = 1                                                             # game index
@@ -78,12 +75,10 @@ sim             = th_sim_game(sim)                                              
 plot_agent_behavior(paths=paths, theta=theta, beh_data=sim.data)
 
 # save data to tsv
-this_sub_dir = os.path.join(paths.data, f"sub-{a_init.a_name}",
-                            "beh")
-if not os.path.exists(this_sub_dir):
-    os.makedirs(this_sub_dir)
+this_sub_dir = os.path.join(paths.data, f"sub-{a_init.a_name}", "beh")          # path to this agent subject's data folder
+if not os.path.exists(this_sub_dir):                                            # check if agent subject's data folder exists
+    os.makedirs(this_sub_dir)                                                   # create directory for this agent subject's data
 data_path = os.path.join(this_sub_dir, f"sub-{a_init.a_name}_beh")
 
-with open(f"{data_path}.tsv", "w", encoding="utf8") as tsv_file:
-    tsv_file.write(sim.data.to_csv(sep="\t", na_rep="nan", index=False)
-                   )
+with open(f"{data_path}.tsv", "w", encoding="utf8") as tsv_file:                # save data to disk
+    tsv_file.write(sim.data.to_csv(sep="\t", na_rep="nan", index=False))
