@@ -25,10 +25,10 @@ def th_phi(S, A, theta, paths):
         paths    (obj) : paths object storing directory path variables
 
     Outputs
-        Phi      (arr) : n_s x n_s x 5 matrices array of state transition probabilities
+        Phi      (dic) : dict with n_a entries of n_s x n_s sparse arrays of state transition probabilities
 
     Saves to disk, if not existing
-        Phi.npy        : n_s x n_s x 5 transition probability matrices array
+        Phi.npy        : dict with n_a entries of n_s x n_s sparse arrays of state transition probabilities
 
     Authors - Belinda Fleischmann, Dirk Ostwald
     """
@@ -44,7 +44,7 @@ def th_phi(S, A, theta, paths):
     Phi = {}
     for p in range(n_a):                                                        # iterate action indices
         Phi[p] = sp.csc_matrix(
-            (n_s, n_s),                                                         # shape of Phi[:, :, a]
+            (n_s, n_s),                                                         # shape of Phi_a, i.e. Phi given a
             dtype=np.int8                                                       # smallest possible datatype: int8
         )
 
@@ -108,7 +108,7 @@ def th_phi(S, A, theta, paths):
     # -----------------------------------------------------------------------------------------------------
     for p, a in enumerate(A):                                                   # a_t iterations
 
-        Phi_matrix_name = matrix_names[p]                                       # Get action-specific Matrix label string for path variable
+        Phi_matrix_name = matrix_names[p]                                       # Get action-specific Matrix label (str) for path variable
 
         # Compute Phi[p] if not existing on disk
         if not os.path.exists(os.path.join(paths.components, f"{Phi_matrix_name}.npz")):
@@ -187,7 +187,7 @@ def th_phi(S, A, theta, paths):
                 sparse=True,
                 file_name=Phi_matrix_name,
                 array=Phi[p]
-            )  # TODO: robust coden, speichert noch alle hitherto erstellten Phi's auf einmal
+            )  # TODO: robust coden
 
         # Load Phi[p] from disk, if existing
         else:
@@ -196,7 +196,7 @@ def th_phi(S, A, theta, paths):
 
     # Plot Phi[p]s, only if grid is of small dimension d = 2
     if d == 2:
-        plot_color_map(                                                     # plot action specific Phi matrices
+        plot_color_map(                                                         # plot action specific Phi matrices
             paths=paths,
             Phi_drill=Phi[0].todense(),
             Phi_minus_dim=Phi[1].todense(),

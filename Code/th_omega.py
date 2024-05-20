@@ -21,7 +21,7 @@ def th_omega(S, O, theta, paths):
         paths    (obj) : paths object storing directory path variables
 
     Outputs:
-        Omega    (arr) : n_s x n_o x 2 observation probability distribution
+        Omega    (dic) : dict with 2 entries ofn_s x n_o sparse arrays of observation probability
 
     """
     # Task parameters and set cardinalities
@@ -37,7 +37,7 @@ def th_omega(S, O, theta, paths):
     Omega = {}
     for p in range(n_a):                                                        # iterate action indices
         Omega[p] = sp.csc_matrix(
-            (n_s, n_o),                                                         # shape of Omega[:, :, a]
+            (n_s, n_o),                                                         # shape of Omega_a, i.e. Omega giv. a
             dtype=np.int8                                                       # smallest possible datatype: int8
         )
 
@@ -54,12 +54,7 @@ def th_omega(S, O, theta, paths):
     for p in range(n_a):                                                        # a_t iterations
 
         Omega_matrix_name = matrix_names[p]                                     # Get action-specific Matrix label string for path variable
-
-        # this_Omega_p = sp.lil_matrix(
-        #     (n_s, n_o),                                                         # shape of Omega[:, :, a]
-        #     dtype=np.int8                                                       # smallest possible datatype: int8
-        # )
-        a = A[p]                                                                # action a \in A (compressed)
+        a                 = A[p]                                                # action a \in A (compressed)
 
         # Compute Omega[p] if not existing on disk
         if not os.path.exists(os.path.join(paths.components, f"{Omega_matrix_name}.npz")):
@@ -102,7 +97,7 @@ def th_omega(S, O, theta, paths):
                                 and o[0] == 0                             # (3)
                                 and o[1] == 1                             # (4)
                         ):
-                            # this_Omega_p[i, m] = 1                              # possible observation
+                            # this_Omega_p[i, m] = 1                            # possible observation
                             rows[idx] = i
                             cols[idx] = m
                             idx += 1
@@ -121,7 +116,7 @@ def th_omega(S, O, theta, paths):
                                 and o[0] == 0                             # (3)
                                 and o[1] == 2                             # (4)
                         ):
-                            # this_Omega_p[i, m] = 1                              # possible observation
+                            # this_Omega_p[i, m] = 1                            # possible observation
                             rows[idx] = i
                             cols[idx] = m
                             idx += 1
@@ -145,7 +140,7 @@ def th_omega(S, O, theta, paths):
                                 and o[0] == 0                             # (3)
                                 and o[1] in [0, 1]                        # (4)
                         ):
-                            # this_Omega_p[i, m] = 1                              # possible observation
+                            # this_Omega_p[i, m] = 1                            # possible observation
                             rows[idx] = i
                             cols[idx] = m
                             idx += 1
@@ -165,7 +160,7 @@ def th_omega(S, O, theta, paths):
                                 and o[0] == 0                             # (3)
                                 and o[1] in [0, 2]                        # (4)
                         ):
-                            # this_Omega_p[i, m] = 1                              # possible observation
+                            # this_Omega_p[i, m] = 1                            # possible observation
                             rows[idx] = i
                             cols[idx] = m
                             idx += 1
@@ -185,7 +180,7 @@ def th_omega(S, O, theta, paths):
                                 and o[0] == 1                             # (3)
                                 and o[1] in [0, 2]                        # (4)
                         ):
-                            # this_Omega_p[i, m] = 1                              # possible observation
+                            # this_Omega_p[i, m] = 1                            # possible observation
                             rows[idx] = i
                             cols[idx] = m
                             idx += 1
@@ -193,8 +188,6 @@ def th_omega(S, O, theta, paths):
                 end = time.time()
                 print(f"Finished one state iteration, for , s = {s} i: {i}, idx: {idx}, "
                       f"time needed: {humanreadable_time(end-start)}")
-
-            # Omega[p] = this_Omega_p.tocsc()                                   # transform lil_matrix to csc_matrix
 
             # Create action-dependent Pmega[p] as sparse matrix
             Omega[p] = sp.csc_matrix(
@@ -209,7 +202,7 @@ def th_omega(S, O, theta, paths):
                 sparse=True,
                 file_name=Omega_matrix_name,
                 array=Omega[p],
-            )  # TODO: robust coden, speichert noch alle hitherto erstellten Phi's auf einmal
+            )  # TODO: robust coden
 
         # Load Omega[p] from disk, if existing
         else:
