@@ -33,7 +33,8 @@ class th_task:
         self.o           = np.full(2, np.nan, dtype=int)                        # task observation
         self.a           = np.nan                                               # agent action
         self.r           = np.nan                                               # reward
-        self.node_colors = np.nan                                               # current node colors
+        self.node_colors = np.full(self.theta.n_n, 0, dtype=np.int8)            # current node colors, initialized as zeros (all black)
+
 
     def start_game(self):
         """
@@ -91,14 +92,66 @@ class th_task:
             self.i_s = i_s_tt                                                   # s_{t} index
             self.s   = s_tt                                                     # s_{t}
 
-    def g(self):
-        """
-        This function evaluates the task's observation
+    def update_node_colors(self):
+        """This function updated the node colors after drill action.
 
         Inputs
-            self      : task object
-                .r_t  : rewart
-                ."""
+            self     (obj) : task object
+                .s   (arr) : 1 x (n_h + 2) array of current task state (to be updated)
+
+        Outputs
+            self     (obj) : task object with updated attributes
+                .s   (arr) : 1 x (n_h + 2) array of current task state (updated)
+        """
+        s1 = self.s[0]                                                          # current position s^1
+        i_s1 = s1 - 1                                                           # current position's node index
+        s3 = self.s[2:]                                                         # hiding spots
+
+        if s1 in s3:                                                            # if current (drilled-on) position is hiding spot
+            self.node_colors[i_s1] = 2                                          # unveal hiding spot, i.e. set node color to blue
+        else:                                                                   # if current (drilled-on) position is not hiding spot
+            self.node_colors[i_s1] = 1                                          # unveal non-hiding spot, i.e. set node color to gray
+
+    def g(self):
+        """This function evaluates the task's observation function.
+
+        Inputs
+            self             (obj) : task object
+                .r           (int) : reward
+                .node_colors (arr) : TODO
+        Outputs
+            self             (obj) : task object with updated attributes
+                .o           (arr) : 1 x 2 array of observation
+        """
+        # TODO: hier weiter
+        a_i = int(np.where(self.A == a)[0])                                     # action index
+
+        Phi_a_s_t = self.Phi[a_i][self.i_s, :].toarray()[0]                     # Phi vector giv current a and s_t
+        i_s_tt = np.argmax(                                                     # index of s_{t+1}
+            rv.multinomial.rvs(
+                1, Phi_a_s_t
+            ) != 0
+        )
+        s_tt = self.S[i_s_tt, :]                                                # s_{t+1}
+
+        if a != 0 and np.all(s_tt == self.s):                                   # after step action the new state is the same as before
+            print("Invalid action")
+            # Das sollte gar nicht erst passieren können, da agent nur von A_giv_s1 wählt
+        else:
+            self.i_s = i_s_tt                                                   # s_{t} index
+            self.s   = s_tt                                                     # s_{t}
+
+        # Update treasure flag o[0]
+        if self.r == 0:                                                         # no treasure found
+            self.o[0] = 0                                                       # treasure flag = 0
+        else:                                                                   # treausure found
+            self.o[0] = 1                                                       # treasure flag = 1
+
+        # Update color observation on current postion o[1]
+        self.o[1] = 0 #self.node_colors[self.s[0]]                              # o^2 corresponds to color on current position
+
+        # TODO: hier weiter
+        # * o_t soll aus Omega gesampled werden (ist natürlich deterministisch)
 
     def identify_A_giv_s1(self):
         """This function evaluates the state dependent set of actions

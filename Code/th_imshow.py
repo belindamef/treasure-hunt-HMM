@@ -64,14 +64,14 @@ def plot_agent_behavior(paths, theta, beh_data):
                             for node in range(n_nodes)]
                     )
 
-                # elif component == "o_t":
-                #     data[component][:, trial_col] = beh_data["node_colors"][trial_col]  # TODO: hier wieter
-                #     if beh_data["o_t"][trial_col][0] == 1:
-                #         data[component][:, trial_col][
-                #             (beh_data["s2_t"][trial_col] - 1)] = 3
+                elif component == "o_t":
+                    data[component][:, trial_col] = beh_data["node_colors"][trial_col]  # TODO: hier wieter
+                    if beh_data["o_t"][trial_col][0] == 1:
+                        data[component][:, trial_col][
+                            (beh_data["s2_t"][trial_col] - 1)] = 3
 
-                # elif component in ["marg_s1_b_t", "marg_s2_b_t"]:
-                #     data[component][:, trial_col] = beh_data[component][trial_col]
+                elif component in ["marg_s1_b_t", "marg_s2_b_t"]:
+                    data[component][:, trial_col] = beh_data[component][trial_col]
 
                 elif component in [
                     # "v_t",
@@ -93,7 +93,7 @@ def plot_agent_behavior(paths, theta, beh_data):
         return {
             "s1_t": colors.ListedColormap(["black", "grey"]),
             "s2_t": colors.ListedColormap(["black", "green"]),
-            "o_t": colors.ListedColormap(["black", "grey", "lightblue", "green"]),
+            "o_t": colors.ListedColormap(["black", "#C0C0C0", "#006666", "green"]),
             "marg_s1_b_t": colors.ListedColormap([viridis_cmap(0),
                                                   viridis_cmap(256)]),
             "marg_s2_b_t": "viridis",

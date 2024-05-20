@@ -1,5 +1,6 @@
 import numpy as np                                                              # NumPy
 import pandas as pd                                                             # Pandas
+import copy as cp
 from th_model import th_model
 from th_task import th_task                                                     # task model module
 from th_agent import th_agent                                                   # agent model module
@@ -93,10 +94,11 @@ def th_sim_game(sim):
             agent.d = np.nan                                                    # decison
 
             # trial start recordings
-            data_one_round.loc[t, "s1_t"] = task.s[0]                           # record first task state s^1
-            data_one_round.loc[t, "s2_t"] = task.s[1]                           # record second task state s^2
-            data_one_round.loc[t, "s3_t"] = task.s[2:]                          # record third task state s^3
-            data_one_round.loc[t, "o_t"]  = task.o[:]                               # record observation o
+            data_one_round.loc[t, "s1_t"]        = task.s[0]                    # record first task state s^1
+            data_one_round.loc[t, "s2_t"]        = task.s[1]                    # record second task state s^2
+            data_one_round.loc[t, "s3_t"]        = task.s[2:]                   # record third task state s^3
+            data_one_round.loc[t, "o_t"]         = task.o[:]                    # record observation o
+            data_one_round.loc[t, "node_colors"] = cp.deepcopy(task.node_colors[:])          # record node colors
 
             # ------- TRIAL INTERACTION ----------------------------------------
             # agent make decison
@@ -108,6 +110,8 @@ def th_sim_game(sim):
             data_one_round.loc[t, "a_t"] = a                                    # record action
 
             # state transition
+            if a == 0:                                                          # if drill action
+                task.update_node_colors()                                       # unveal hiding spot status of current position
             task.f(a)                                                           # task state-state transition
 
             # ------ END OF ONE TRIAL ------
