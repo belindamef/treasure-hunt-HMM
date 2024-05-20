@@ -23,6 +23,7 @@ class th_task:
         self.O           = t_init.O                                             # observation set
         self.A           = t_init.A                                             # action set
         self.Phi         = t_init.Phi                                           # action-dependent state-state transition probability
+        self.Omega       = t_init.Omega                                         # action-dependent and state-conditional observation probability distribution
         self.A_giv_s1    = np.nan                                               # state-dependent action set
 
         # Dynamic components
@@ -62,12 +63,13 @@ class th_task:
         """This function evaluates the task's state-state transition function.
 
         Inputs
-            self     (obj) : task object
-                .i_s (int) : state index
-                .s   (arr) : 1 x (n_h + 2) array of current task state (to be updated)
-                .S   (arr) : n_s x (2 + n_h) array of state values
-                .Phi (dic) : dict with n_a entries of n_s x n_s sparse arrays of state transition probabilities
-            a        (int) : action in trial t
+            self       (obj) : task object
+                .i_s   (int) : state index
+                .s     (arr) : 1 x (n_h + 2) array of current task state (to be updated)
+                .S     (arr) : n_s x (2 + n_h) array of state values
+                .Phi   (dic) : dict with n_a entries of n_s x n_s sparse arrays of state transition probabilities
+                .Omega (dic) : dict with 2 entries of n_s x n_o sparse arrays of observation probability
+            a          (int) : action in trial t
 
         Outputs
             self     (obj) : task object with updated attributes
@@ -111,46 +113,31 @@ class th_task:
         else:                                                                   # if current (drilled-on) position is not hiding spot
             self.node_colors[i_s1] = 1                                          # unveal non-hiding spot, i.e. set node color to gray
 
-    def g(self):
+    def g(self, a):
         """This function evaluates the task's observation function.
 
         Inputs
             self             (obj) : task object
-                .r           (int) : reward
-                .node_colors (arr) : TODO
+                .i_s         (int) : state index
+                .O           (arr) : n_n x 2 array of observation values
+                .Omega       (dic) : dict with 2 entries of n_s x n_o sparse arrays of observation probability
+            a                (int) : action in trial t
+
         Outputs
             self             (obj) : task object with updated attributes
                 .o           (arr) : 1 x 2 array of observation
         """
-        # TODO: hier weiter
-        a_i = int(np.where(self.A == a)[0])                                     # action index
+        A = [0, 1]                                                              # compressed action space (drill/step)
+        i_a = A.index(a)                                                        # action index
 
-        Phi_a_s_t = self.Phi[a_i][self.i_s, :].toarray()[0]                     # Phi vector giv current a and s_t
-        i_s_tt = np.argmax(                                                     # index of s_{t+1}
+        # TODO: Omega nicht deterministisch
+        Omega_a_s_t = self.Omega[i_a][self.i_s, :].toarray()[0]                 # Omega vector giv current a and s_t
+        i_o = np.argmax(                                                        # index of o_t
             rv.multinomial.rvs(
-                1, Phi_a_s_t
+                1, Omega_a_s_t
             ) != 0
         )
-        s_tt = self.S[i_s_tt, :]                                                # s_{t+1}
-
-        if a != 0 and np.all(s_tt == self.s):                                   # after step action the new state is the same as before
-            print("Invalid action")
-            # Das sollte gar nicht erst passieren können, da agent nur von A_giv_s1 wählt
-        else:
-            self.i_s = i_s_tt                                                   # s_{t} index
-            self.s   = s_tt                                                     # s_{t}
-
-        # Update treasure flag o[0]
-        if self.r == 0:                                                         # no treasure found
-            self.o[0] = 0                                                       # treasure flag = 0
-        else:                                                                   # treausure found
-            self.o[0] = 1                                                       # treasure flag = 1
-
-        # Update color observation on current postion o[1]
-        self.o[1] = 0 #self.node_colors[self.s[0]]                              # o^2 corresponds to color on current position
-
-        # TODO: hier weiter
-        # * o_t soll aus Omega gesampled werden (ist natürlich deterministisch)
+        self.o = self.O[i_o, :]                                                 # o_t
 
     def identify_A_giv_s1(self):
         """This function evaluates the state dependent set of actions

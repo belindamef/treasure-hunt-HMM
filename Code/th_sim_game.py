@@ -86,7 +86,12 @@ def th_sim_game(sim):
             # ------ TRIAL START -----------------------------------------------
             task.t = t                                                          # trial number
 
-            o = task.g()                                                            # evaluate observation o
+            if t == 0:                                                          # first trial in round
+                task.g(a=1)                                                     # observation probability as if agent had stepped on its starting position
+            else:                                                               # all subsequent trials
+                task.g(a=model.a)                                               # evaluate observation o
+            # TODO [FRAGE]: Alternativ könnte model.a quasi als dummy-action mit dem Wert 1 initiiert werden.
+
             # tODO: agent update belief state
 
             # Reset dynamic model components
