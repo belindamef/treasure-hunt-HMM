@@ -77,7 +77,7 @@ def plot_agent_behavior(paths, theta, beh_data):
                     # "v_t",
                     "d_t",
                     "a_t"
-                    ]:
+                ]:
 
                     # plot current position along in a grid
                     data[component][:, trial_col] = np.array(
@@ -265,7 +265,6 @@ def plot_agent_behavior(paths, theta, beh_data):
                 cax.xaxis.set_label_position('top')
                 cax.xaxis.set_ticks_position('top')
 
-
         # ------ Start Plotting Rountine ----------------------------------
         images = []
 
@@ -344,7 +343,6 @@ def plot_agent_behavior(paths, theta, beh_data):
 
         return images
 
-
     dim = theta.d                                                               # dimensionality of square grid world
     n_nodes = theta.n_n                                                         # number nodes in gridworld
     n_plotable_trials = beh_data["s1_t"].count()
@@ -375,7 +373,7 @@ def plot_agent_behavior(paths, theta, beh_data):
     )
 
     fig.suptitle(f"Agent {beh_data['agent'][0]} behavior "
-                 #r"$\tau = $" f"{beh_data['tau_gen'][0]}"
+                 # r"$\tau = $" f"{beh_data['tau_gen'][0]}"
                  )
 
     y_labels = define_y_labels()
@@ -397,5 +395,5 @@ def plot_agent_behavior(paths, theta, beh_data):
     )
     fig_path = os.path.join(paths.figures, fig_fn)
     fig.savefig(f"{fig_path}.pdf",
-                #dpi=200,
+                # dpi=200,
                 format='pdf')

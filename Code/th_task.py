@@ -35,7 +35,6 @@ class th_task:
         self.r           = np.nan                                               # reward
         self.node_colors = np.full(self.theta.n_n, 0, dtype=np.int8)            # current node colors, initialized as zeros (all black)
 
-
     def start_game(self):
         """
         This function determines a game's starting state, including the agent's
@@ -75,9 +74,9 @@ class th_task:
                 .i_s (int) : task state index
                 .s   (arr) : 1 x (n_h + 2) array of current task state (updated)
         """
-        a_i = int(np.where(self.A == a)[0])                                     # action index
+        i_a = int(np.where(self.A == a)[0])                                     # action index
 
-        Phi_a_s_t = self.Phi[a_i][self.i_s, :].toarray()[0]                     # a-dep. Phi vector giv current s_t
+        Phi_a_s_t = self.Phi[i_a][self.i_s, :].toarray()[0]                     # a-dep. Phi vector giv current s_t
         i_s_tt = np.argmax(                                                     # index of s_{t+1}
             rv.multinomial.rvs(
                 1, Phi_a_s_t
@@ -96,12 +95,12 @@ class th_task:
         """This function updated the node colors after drill action.
 
         Inputs
-            self     (obj) : task object
-                .s   (arr) : 1 x (n_h + 2) array of current task state (to be updated)
+            self             (obj) : task object
+                .s           (arr) : 1 x (n_h + 2) array of current task state
 
         Outputs
-            self     (obj) : task object with updated attributes
-                .s   (arr) : 1 x (n_h + 2) array of current task state (updated)
+            self             (obj) : task object with updated attributes
+                .node_colors (arr) : 1 x n_n array representing node colors (updated)
         """
         s1 = self.s[0]                                                          # current position s^1
         i_s1 = s1 - 1                                                           # current position's node index

@@ -45,7 +45,7 @@ def th_sim_game(sim):
     m_init.task         = task                                                  # task embedding
     m_init.agent        = agent                                                 # agent embedding
     model               = th_model(m_init)                                      # model object
-    pi                  = np.array([2, 3, 4, 1])                                # TODO: decision policy, um zu zeigen, dass der agent mit vorgegebenen actions \pi rum geht 
+    pi                  = np.array([2, 3, 4, 1])                                # TODO: decision policy, um zu zeigen, dass der agent mit vorgegebenen actions \pi rum geht
 
     # Task agent interaction simulation
     # --------------------------------------------------------------------------
@@ -98,7 +98,7 @@ def th_sim_game(sim):
             data_one_round.loc[t, "s2_t"]        = task.s[1]                    # record second task state s^2
             data_one_round.loc[t, "s3_t"]        = task.s[2:]                   # record third task state s^3
             data_one_round.loc[t, "o_t"]         = task.o[:]                    # record observation o
-            data_one_round.loc[t, "node_colors"] = cp.deepcopy(task.node_colors[:])          # record node colors
+            data_one_round.loc[t, "node_colors"] = cp.deepcopy(task.node_colors[:])  # record node colors
 
             # ------- TRIAL INTERACTION ----------------------------------------
             # agent make decison

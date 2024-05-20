@@ -21,7 +21,7 @@ def th_omega(S, O, theta, paths):
         paths    (obj) : paths object storing directory path variables
 
     Outputs:
-        Omega    (dic) : dict with 2 entries ofn_s x n_o sparse arrays of observation probability
+        Omega    (dic) : dict with 2 entries of n_s x n_o sparse arrays of observation probability
 
     """
     # Task parameters and set cardinalities
