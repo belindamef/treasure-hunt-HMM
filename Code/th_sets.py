@@ -23,6 +23,7 @@ def th_sets(theta, paths):
         S        (arr) : n_s x (2 + n_h) array of state values
         O        (arr) : n_n x 2 array of observation values
         A        (arr) : 5 x 1 array of action values
+        R        (arr) : 2 x 1 array no reward values
 
     Authors - Belinda Fleischmann, Dirk Ostwald
     """
@@ -74,3 +75,7 @@ def th_sets(theta, paths):
     # Action set
     A = np.array([0, -d, 1, d, -1])                                             # actions (drill, north, east, south, west)
     np.save(os.path.join(paths.components, "A"), A)                             # save to disk
+
+    # Reward set
+    R = np.array([0, 1])                                                        # reward (no treasure, treasure)
+    np.save(os.path.join(paths.components, "R"), R)

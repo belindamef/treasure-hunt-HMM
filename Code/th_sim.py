@@ -38,6 +38,7 @@ th_sets(theta, paths)                                                           
 S               = np.load(os.path.join(paths.components, "S.npy"))              # state set
 O               = np.load(os.path.join(paths.components, "O.npy"))              # observation set
 A               = np.load(os.path.join(paths.components, "A.npy"))              # action set
+R               = np.load(os.path.join(paths.components, "A.npy"))              # reward set
 
 # Stochastic matrices
 Phi             = th_phi(S, A, theta, paths)                                    # action-dependent state-state transition probability matrices
@@ -49,6 +50,7 @@ t_init.theta    = theta                                                         
 t_init.S        = S                                                             # state set
 t_init.O        = O                                                             # observation set
 t_init.A        = A                                                             # action set
+t_init.R        = R                                                             # reward set
 t_init.Phi      = Phi                                                           # action-dependent state-state transition probability matrix
 t_init.Omega    = Omega                                                         # action-dependent and state-conditional observation probability distribution
 

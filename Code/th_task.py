@@ -13,6 +13,7 @@ class th_task:
                 .S      (arr) : n_s x (2 + n_h) array of state values
                 .O      (arr) : n_n x 2 array of observation values
                 .A      (arr) : 5 x 1 array of action values
+                .R      (arr) : 2 x 1 array no reward values
                 .Phi    (dic) : dict with n_a entries of n_s x n_s sparse arrays of state transition probabilities
 
         Authors - Belinda Fleischmann, Dirk Ostwald
