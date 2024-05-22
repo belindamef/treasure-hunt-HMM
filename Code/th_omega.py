@@ -7,7 +7,7 @@ import time
 
 
 def th_omega(S, O, theta, paths):
-    """This function evaluates the action-dependent and state-conditional
+    """This function evaluates the action-dependent and state-Scenarioal
     observation probability distribution of a Bayesian agent for the treasure
     hunt task.
 
@@ -79,10 +79,10 @@ def th_omega(S, O, theta, paths):
                     s = S[i, :]                                                 # state s \in S
                     o = O[m, :]                                                 # observation o \in O
 
-                    # -------After DRILL actions: ------------------------------
-                    if a == 0:                                                  # dril actions (a_t = 0)
+                    # -------After DRILL actions: ------------------------------# siehe Table 1 in Overleaf
+                    if a == 0:                                                  # drill actions (a_t = 0)
 
-                        # CONDITION "DRILL A":           CORRESP MODEL VARIABLE:
+                        # # Scenario "Unveiled Non-Hiding Spot"   CORRESP VARS.:
                         # ------------------------------------------------------
                         # if new position...                               s[0]
                         # ...(1) IS NOT treasure location                  s[1]
@@ -90,19 +90,17 @@ def th_omega(S, O, theta, paths):
                         # all observation, for which...
                         # ...(3) tr_flag == 0,                             o[0]
                         # ...(4) and node color == 1 (grey),               o[1]
-
-                        if (                                                    # CONDITION "DRILL A"
-                                s[0] != s[1]                              # (1)
-                                and s[0] not in s[2:]                     # (2)
-                                and o[0] == 0                             # (3)
-                                and o[1] == 1                             # (4)
+                        if (                                                    # Scenario "Unveiled Non-Hiding Spot":
+                                s[0] != s[1]                                    # (1) new position s[0] IS NOT treasure location s[1]
+                                and s[0] not in s[2:]                           # (2) new position s[0] IS NOT a hiding spot s[2:]
+                                and o[0] == 0                                   # (3) treasure flag o[0] is 0
+                                and o[1] == 1                                   # (4) node color o[1] is grey (1)
                         ):
-                            # this_Omega_p[i, m] = 1                            # possible observation
-                            rows[idx] = i
-                            cols[idx] = m
+                            rows[idx] = i                                       # possible observation's row index for Omega
+                            cols[idx] = m                                       # possible observation's col index for Omega
                             idx += 1
 
-                        # CONDITION "DRILL B":           CORRESP MODEL VARIABLE:
+                        # Scenario "Unveiled Hiding Spot":        CORRESP VARS.:
                         # ------------------------------------------------------
                         # if new position...                               s[0]
                         # ...(1) IS NOT treasure location                  s[1]
@@ -110,23 +108,22 @@ def th_omega(S, O, theta, paths):
                         # all observation, for which...
                         # ...(3) tr_flag == 0,                             o[0]
                         # ...(4) and node color == 2 (blue),               o[1]
-                        if (                                                    # CONDITION "DRILL B"
-                                s[0] != s[1]                              # (1)
-                                and s[0] in s[2:]                         # (2)
-                                and o[0] == 0                             # (3)
-                                and o[1] == 2                             # (4)
+                        if (                                                    # Scenario "Unveiled Hiding Spot"
+                                s[0] != s[1]                                    # (1) new position s[0] IS NOT treasure location s[1]
+                                and s[0] in s[2:]                               # (2) new position s[0] IS a hiding spot s[2:]
+                                and o[0] == 0                                   # (3) treasure flag o[0] is 0
+                                and o[1] == 2                                   # (4) node color o[1] is blue (2)
                         ):
-                            # this_Omega_p[i, m] = 1                            # possible observation
-                            rows[idx] = i
-                            cols[idx] = m
+                            rows[idx] = i                                       # possible observation's row index for Omega
+                            cols[idx] = m                                       # possible observation's col index for Omega
                             idx += 1
 
-                        # All other observaton probabs remain 0 as initiated.
+                        # All other observaton probabs remain 0 as initiated.   # Impossible Scenarios
 
-                # -------After STEP actions: -----------------------------------
+                # -------After STEP actions: -----------------------------------# siehe Table 2 in Overleaf
                     else:                                                       # step actions (a_t = 1)
 
-                        # CONDITION "STEP A":            CORRESP MODEL VARIABLE:
+                        # Scenario "No tr, stands on none-Hide":  CORRESP VARS.:
                         # ------------------------------------------------------
                         # if new position...                               s[0]
                         # ...(1) IS NOT treasure location                  s[1]
@@ -134,18 +131,17 @@ def th_omega(S, O, theta, paths):
                         # all observation, for which...
                         # ...(3) tr_flag == 0,                             o[0]
                         # ...(4) and node color in [0, 1](black or grey),  o[1]
-                        if (                                                    # CONDTION "STEP A"
-                                s[0] != s[1]                              # (1)
-                                and s[0] not in s[2:]                     # (2)
-                                and o[0] == 0                             # (3)
-                                and o[1] in [0, 1]                        # (4)
+                        if (                                                    # Scenario "No treasure, stands on None-Hiding Spot"
+                                s[0] != s[1]                                    # (1) new position s[0] IS NOT treasure location s[1]
+                                and s[0] not in s[2:]                           # (2) new position s[0] IS NOT a hiding spot s[2:]
+                                and o[0] == 0                                   # (3) treasure flag o[0] is 0
+                                and o[1] in [0, 1]                              # (4) node color o[1] is black (0) or gray (1)
                         ):
-                            # this_Omega_p[i, m] = 1                            # possible observation
-                            rows[idx] = i
-                            cols[idx] = m
+                            rows[idx] = i                                       # possible observation's row index for Omega
+                            cols[idx] = m                                       # possible observation's col index for Omega
                             idx += 1
 
-                        # CONDITION "STEP B":            CORRESP MODEL VARIABLE:
+                        # Scenario "No treasure, stands on Hide": CORRESP VARS.:
                         # ------------------------------------------------------
                         # if new position...                               s[0]
                         # ...(1) IS NOT treasure location                  s[1]
@@ -154,18 +150,17 @@ def th_omega(S, O, theta, paths):
                         # ...(3) tr_flag == 0,                             o[0]
                         # ...(4) and node color in [0, 1](black or blue),  o[1]
 
-                        if (                                                    # CONDTION "STEP B"
-                                s[0] != s[1]                              # (1)
-                                and s[0] in s[2:]                         # (2)
-                                and o[0] == 0                             # (3)
-                                and o[1] in [0, 2]                        # (4)
+                        if (                                                    # Scenario "No treasure, stands Hiding Spot"
+                                s[0] != s[1]                                    # (1) new position s[0] IS NOT treasure location s[1]
+                                and s[0] in s[2:]                               # (2) new position s[0] IS a hiding spot s[2:]
+                                and o[0] == 0                                   # (3) treasure flag o[0] is 0
+                                and o[1] in [0, 2]                              # (4) node color o[1] is black (0) or blue (2)
                         ):
-                            # this_Omega_p[i, m] = 1                            # possible observation
-                            rows[idx] = i
-                            cols[idx] = m
+                            rows[idx] = i                                       # possible observation's row index for Omega
+                            cols[idx] = m                                       # possible observation's col index for Omega
                             idx += 1
 
-                        # CONDITION "STEP C":            CORRESP MODEL VARIABLE:
+                        # Scenario "Treasure, stands on Hide":    CORRESP VARS.:
                         # ------------------------------------------------------
                         # if new position...                               s[0]
                         # ...(1) IS treasure location                      s[1]
@@ -174,16 +169,17 @@ def th_omega(S, O, theta, paths):
                         # ...(3) tr_flag == 1,                             o[0]
                         # ...(4) and node color in [0, 1](black or blue),  o[1]
 
-                        if (                                                    # CONDTION "STEP C"
-                                s[0] == s[1]                              # (1)
-                                and s[0] in s[2:]                         # (2)
-                                and o[0] == 1                             # (3)
-                                and o[1] in [0, 2]                        # (4)
+                        if (                                                    # Scenario "Treasure found, stands Hiding Spot"
+                                s[0] == s[1]                                    # (1) new position s[0] IS treasure location s[1]
+                                and s[0] in s[2:]                               # (2) new position s[0] IS a hiding spot s[2:]
+                                and o[0] == 1                                   # (3) treasure flag o[0] is 1
+                                and o[1] in [0, 2]                              # (4) node color o[1] is black (0) or blue (2)
                         ):
-                            # this_Omega_p[i, m] = 1                            # possible observation
-                            rows[idx] = i
-                            cols[idx] = m
+                            rows[idx] = i                                       # possible observation's row index for Omega
+                            cols[idx] = m                                       # possible observation's col index for Omega
                             idx += 1
+
+                        # All other observaton probabs remain 0 as initiated.   # Impossible Scenarios
 
                 end = time.time()
                 print(f"Finished one state iteration, for , s = {s} i: {i}, idx: {idx}, "
